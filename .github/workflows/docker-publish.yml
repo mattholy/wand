@@ -1,4 +1,4 @@
-name: Docker Image CI
+name: 自动发布Docker镜像
 
 on:
   release:
