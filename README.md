@@ -1,2 +1,6 @@
-# lighthouse
-An ActivityPub Relay made of FastAPI
+# Lighthouse
+Lighthouse is an ActivityPub relay made of FastAPI.
+
+## About
+## Usage
+## Future Plan
