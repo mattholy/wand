@@ -1,4 +1,4 @@
-name: 自动发布Docker镜像
+name: Push Docker image on release
 
 on:
   release:
@@ -9,7 +9,7 @@ jobs:
   build-and-push:
     runs-on: ubuntu-latest
     steps:
-      - name: Check out the repo
+      - name: Check-out the repo
         uses: actions/checkout@v2
 
       - name: Log in to Docker Hub
