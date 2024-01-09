@@ -1,0 +1,10 @@
+{
+    "ui": {
+        "home": {
+            "desc": "2233"
+        }
+    },
+    "message": {
+        "hello": "hello world"
+    }
+}
