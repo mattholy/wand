@@ -1,0 +1,13 @@
+{
+    "ui": {
+        "index": {
+            "desc": "Hello, world!"
+        },
+        "admin": {
+            "desc": "admin"
+        }
+    },
+    "message": {
+        "hello": "你好，世界"
+    }
+}

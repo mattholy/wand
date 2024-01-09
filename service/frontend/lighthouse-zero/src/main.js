@@ -7,8 +7,8 @@ import { createI18n } from 'vue-i18n'
 import App from './App.vue'
 import router from './router'
 
-import enUS from '../i18n/enUS.json'
-import zhCN from '../i18n/zhCN.json'
+import enUS from '../i18n/en-US.json'
+import zhCN from '../i18n/zh-CN.json'
 
 const app = createApp(App)
 const i18n = createI18n({
