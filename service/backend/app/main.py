@@ -22,7 +22,7 @@ from starlette.middleware.base import BaseHTTPMiddleware
 app = FastAPI(
     title="wand",
     description="An open-source powerful activitypub relay written in Python!",
-    version=os.environ.get('LH_VERSION','dev'),
+    version=os.environ.get('WD_VERSION','dev'),
     contact={
         'name':"Mattholy",
         'url':"https://github.com/mattholy",
