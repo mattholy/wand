@@ -158,3 +158,52 @@ cython_debug/
 #  and can be added to the global gitignore or merged into this file.  For a more nuclear
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
+
+# macOS 系统文件
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# FastAPI / Python 相关 (位于 service/backend)
+service/backend/__pycache__/
+service/backend/*.py[cod]
+service/backend/*.pyo
+service/backend/*.pyd
+service/backend/env/
+service/backend/venv/
+service/backend/pip-wheel-metadata/
+service/backend/*.egg-info/
+service/backend/.cache
+service/backend/.pytest_cache/
+service/backend/.coverage
+service/backend/.coverage.*
+service/backend/*.cover
+service/backend/.hypothesis/
+service/backend/.pyenv
+service/backend/.python-version
+
+# Vue / Node.js 相关 (位于 service/frontend/lighthouse-zero)
+service/frontend/lighthouse-zero/node_modules/
+service/frontend/lighthouse-zero/dist/
+service/frontend/lighthouse-zero/npm-debug.log
+service/frontend/lighthouse-zero/yarn-error.log
+service/frontend/lighthouse-zero/.pnp
+service/frontend/lighthouse-zero/pnp.js
+
+# 日志和数据库文件
+*.log
+*.sql
+*.sqlite
+
+# 环境变量和配置文件
+.env
+.env.*
+!.env.example
+
+# IDE / 编辑器
+.vscode/*
+.idea/*
+
+# 其他忽略文件
+*.swp
+*~
