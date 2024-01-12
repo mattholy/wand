@@ -14,4 +14,5 @@ setup some env
 
 import os
 
-
+VERSION = os.environ.get('WD_VERSION','DEV')
+SERVER_URL = os.environ.get('WD_SERVER_URL','localhost')
