@@ -1,5 +1,5 @@
-# Lighthouse
-Lighthouse is an ActivityPub relay made of FastAPI.
+# wanderor
+wanderor is an ActivityPub relay made of FastAPI.
 
 
 ## About

@@ -28,5 +28,5 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: mattholy/lighthouse:${{ steps.extract_tag.outputs.tag }}
+          tags: mattholy/wanderor:${{ steps.extract_tag.outputs.tag }}
           build-args: VERSION=${{ steps.extract_tag.outputs.tag }}

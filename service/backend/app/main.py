@@ -20,9 +20,9 @@ from fastapi.responses import JSONResponse
 from starlette.middleware.base import BaseHTTPMiddleware
 
 app = FastAPI(
-    title="Lighthouse",
+    title="wanderor",
     description="An open-source powerful activitypub relay written in Python!",
-    version="0",
+    version=os.environ.get('LH_VERSION','dev'),
     contact={
         'name':"Mattholy",
         'url':"https://github.com/mattholy",
@@ -30,8 +30,10 @@ app = FastAPI(
     },
     license_info= {
         "name": "MIT License",
-        "url": "https://github.com/mattholy/lighthouse?tab=MIT-1-ov-file#readme",
-    }
+        "url": "https://github.com/mattholy/wanderor?tab=MIT-1-ov-file#readme",
+    },
+    docs_url=None,
+    redoc_url='/docs'
 )
 
 app.add_middleware(
@@ -45,12 +47,14 @@ app.add_middleware(
 @app.api_route(
     '/api/{endpoint:path}',
     methods=["GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD", "PATCH", "TRACE"],
-    response_class=JSONResponse
+    response_class=JSONResponse,
+    name='aaa',
+    tags=['Other Services'], description='其它服务嵌入'
 )
 async def relay(request: Request, endpoint: str):
     return JSONResponse({'hello':'world','api':endpoint})
 
-app.mount("/", StaticFiles(directory=os.path.join(os.path.dirname(os.path.abspath(__file__)), "web"), html=True), name="Lighthouse-Zero")
+app.mount("/", StaticFiles(directory=os.path.join(os.path.dirname(os.path.abspath(__file__)), "web"), html=True), name="wanderor-Zero")
 
 
 

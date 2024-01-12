@@ -1,9 +1,9 @@
 # Stage 01 - Build Vue
 FROM node:20 as vue
 WORKDIR /app
-COPY service/frontend/lighthouse-zero/package*.json ./
+COPY service/frontend/wanderor-zero/package*.json ./
 RUN npm install
-COPY service/frontend/lighthouse-zero/ .
+COPY service/frontend/wanderor-zero/ .
 RUN npm run build
 
 # Stage 02 - Build FastAPI
