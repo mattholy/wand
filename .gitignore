@@ -182,13 +182,13 @@ service/backend/.hypothesis/
 service/backend/.pyenv
 service/backend/.python-version
 
-# Vue / Node.js 相关 (位于 service/frontend/wanderor-zero)
-service/frontend/wanderor-zero/node_modules/
-service/frontend/wanderor-zero/dist/
-service/frontend/wanderor-zero/npm-debug.log
-service/frontend/wanderor-zero/yarn-error.log
-service/frontend/wanderor-zero/.pnp
-service/frontend/wanderor-zero/pnp.js
+# Vue / Node.js 相关 (位于 service/frontend/wand-zero)
+service/frontend/wand-zero/node_modules/
+service/frontend/wand-zero/dist/
+service/frontend/wand-zero/npm-debug.log
+service/frontend/wand-zero/yarn-error.log
+service/frontend/wand-zero/.pnp
+service/frontend/wand-zero/pnp.js
 
 # 日志和数据库文件
 *.log

@@ -20,7 +20,7 @@ from fastapi.responses import JSONResponse
 from starlette.middleware.base import BaseHTTPMiddleware
 
 app = FastAPI(
-    title="wanderor",
+    title="wand",
     description="An open-source powerful activitypub relay written in Python!",
     version=os.environ.get('LH_VERSION','dev'),
     contact={
@@ -30,7 +30,7 @@ app = FastAPI(
     },
     license_info= {
         "name": "MIT License",
-        "url": "https://github.com/mattholy/wanderor?tab=MIT-1-ov-file#readme",
+        "url": "https://github.com/mattholy/wand?tab=MIT-1-ov-file#readme",
     },
     docs_url=None,
     redoc_url='/docs'
@@ -54,7 +54,7 @@ app.add_middleware(
 async def relay(request: Request, endpoint: str):
     return JSONResponse({'hello':'world','api':endpoint})
 
-app.mount("/", StaticFiles(directory=os.path.join(os.path.dirname(os.path.abspath(__file__)), "web"), html=True), name="wanderor-Zero")
+app.mount("/", StaticFiles(directory=os.path.join(os.path.dirname(os.path.abspath(__file__)), "web"), html=True), name="wand-Zero")
 
 
 

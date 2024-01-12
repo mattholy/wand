@@ -1,5 +1,5 @@
-# wanderor
-wanderor is an ActivityPub relay made of FastAPI.
+# wand
+wand is an ActivityPub relay made of FastAPI.
 
 
 ## About
