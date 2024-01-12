@@ -10,6 +10,9 @@ RUN npm run build
 FROM python:3.11
 WORKDIR /app
 
+ARG VERSION
+ENV LH_VERSION=${VERSION}
+
 COPY service/backend/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
