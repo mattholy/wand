@@ -3,7 +3,7 @@
 </p>
 
 # Wand
-wand是一个用FastAPI和VUE完成的开源ActivityPUB中继站。
+Wand是一个用Python完成的开源ActivityPUB中继站。
 
 [English](README.md) [中文](README_zh-CN.md)
 
