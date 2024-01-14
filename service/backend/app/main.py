@@ -59,25 +59,16 @@ async def relay(request: Request, endpoint: str):
     return JSONResponse({'hello': 'world', 'api': endpoint})
 
 
-@app.get("/.well-known/{item}", response_class=JSONResponse, tags=['.well-known'], name='.well-known')
-async def well_known(item: str):
-    response_of_well_known = {
-        'nodeinfo':
-            {
-                "links": [
-                    {
-                        "rel": "http://nodeinfo.diaspora.software/ns/schema/2.0",
-                        "href": f"https://{wand_env.SERVER_URL}/nodeinfo/2.0"
-                    }
-                ]
-            }
-    }
-    return JSONResponse(response_of_well_known.get(item, {}))
+@app.get("/.well-known/nodeinfo", response_class=JSONResponse, tags=['.well-known'], name='NodeinfoLinks',response_model=wand_env.NODE_INFO_LINKS)
+async def nodeinfolinks():
+    return wand_env.NODE_INFO_LINKS
 
 
-@app.get("/nodeinfo/2.0", response_class=JSONResponse, tags=['Discovery Protocol'], name='Nodeinfo')
+@app.get("/nodeinfo/2.1", response_class=JSONResponse, tags=['.well-knownl'], name='Nodeinfo',response_model=wand_env.NODE_INFO)
 async def nodeinfo():
-    return JSONResponse()
+    res = wand_env.NODE_INFO
+    res.usage.users.total=1
+    return res
 
 app.mount("/", StaticFiles(directory=os.path.join(os.path.dirname(
     os.path.abspath(__file__)), "web"), html=True), name="wand-Zero")
