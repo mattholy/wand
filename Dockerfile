@@ -22,4 +22,5 @@ COPY --from=vue /app/dist /app/app/web
 
 EXPOSE 80
 
-CMD ["uvicorn", "app.main:app", "--proxy-headers", "--host", "0.0.0.0", "--port", "80"]
+COPY start.sh /start.sh
+CMD ["/start.sh"]

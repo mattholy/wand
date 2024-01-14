@@ -13,12 +13,16 @@ setup some env
 '''
 
 import os
+import sqlalchemy
+import redis
+from sqlalchemy import create_engine
 
 from model import activitypub_model
 
 # Env
 VERSION = os.environ.get('WD_VERSION', 'DEV')
 SERVER_URL = os.environ.get('WD_SERVER_URL', 'localhost')
+ADMIN_PUB_KEY = os.environ.get('WD_ADMIN_PGP_PUB_KEYFILE', 'localhost')
 
 # Base Info
 NODE_INFO_LINKS = activitypub_model.NodeInfoLinks(links=[
@@ -45,4 +49,19 @@ NODE_INFO = activitypub_model.NodeInfoModel(
         )
     ),
     metadata={}
+)
+
+# DataBase
+REDIS_POOL = redis.ConnectionPool(
+    host=os.environ.get('WD_REDIS_SERVER', 'localhost'),
+    port=os.environ.get('WD_REDIS_PORT', 6379),
+    password=os.environ.get('WD_REDIS_PWD', None),
+    max_connections=10
+)
+POSTGRES_POOL = create_engine(
+    f"postgresql://{os.environ.get('WD_POSTGRES_USER', 'wand')}:{os.environ.get('WD_POSTGRES_PWD', 'password_of_wand')}@{os.environ.get('WD_POSTGRES_SERVER', 'localhost')}:{os.environ.get('WD_POSTGRES_PORT', '5432')}/{os.environ.get('WD_POSTGRES_DBNAME', 'wand')}",
+    pool_size=10,
+    max_overflow=20,
+    pool_timeout=30,
+    pool_recycle=3600
 )

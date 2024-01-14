@@ -20,6 +20,9 @@ from fastapi.responses import JSONResponse
 from starlette.middleware.base import BaseHTTPMiddleware
 
 import wand_env
+from setup import setup
+
+# setup()
 
 app = FastAPI(
     title="wand",
@@ -64,7 +67,7 @@ async def nodeinfolinks():
     return wand_env.NODE_INFO_LINKS
 
 
-@app.get("/nodeinfo/2.1", response_class=JSONResponse, tags=['.well-knownl'], name='Nodeinfo',response_model=wand_env.NODE_INFO)
+@app.get("/nodeinfo/2.1", response_class=JSONResponse, tags=['.well-known'], name='Nodeinfo',response_model=wand_env.NODE_INFO)
 async def nodeinfo():
     res = wand_env.NODE_INFO
     res.usage.users.total=1

@@ -1,2 +1,4 @@
+gunicorn
 uvicorn
 fastapi
+sqlalchemy
