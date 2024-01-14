@@ -25,30 +25,30 @@ SERVER_URL = os.environ.get('WD_SERVER_URL', 'localhost')
 ADMIN_PUB_KEY = os.environ.get('WD_ADMIN_PGP_PUB_KEYFILE', 'localhost')
 
 # Base Info
-NODE_INFO_LINKS = activitypub_model.NodeInfoLinks(links=[
-    activitypub_model.Link(
+NODE_INFO_LINKS = activitypub_model.NodeinfoLinks(links=[
+    activitypub_model.NodeinfoLink(
         rel="http://nodeinfo.diaspora.software/ns/schema/2.1",
         href=f"https://{SERVER_URL}/nodeinfo/2.1"
     )
 ])
-NODE_INFO = activitypub_model.NodeInfoModel(
+NODE_INFO = activitypub_model.Nodeinfo(
     version="2.1",
-    software=activitypub_model.Software(
+    software=activitypub_model.NodeinfoSoftware(
         name="wand",
         version=VERSION,
         repository="https://github.com/mattholy/wand"
     ),
     protocols=["activitypub"],
     services={"inbound": [], "outbound": []},
-    openRegistrations=True,
-    usage=activitypub_model.Usage(
-        users=activitypub_model.Users(
+    open_registrations=True,
+    usage=activitypub_model.NodeinfoUsage(
+        users=activitypub_model.NodeinfoUsageUsers(
             total=0,
-            activeMonth=0,
-            activeHalfyear=0
+            active_month=0,
+            active_halfyear=0
         )
     ),
-    metadata={}
+    metadata=activitypub_model.NodeinfoMetadata()
 )
 
 # DataBase

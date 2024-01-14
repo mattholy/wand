@@ -22,6 +22,8 @@ from starlette.middleware.base import BaseHTTPMiddleware
 import wand_env
 from setup import setup
 
+from api.activitypub.relay import router as relay_router
+
 # setup()
 
 app = FastAPI(
@@ -50,27 +52,18 @@ app.add_middleware(
 )
 
 
-@app.api_route(
-    '/api/{endpoint:path}',
-    methods=["GET", "POST", "PUT", "DELETE",
-             "OPTIONS", "HEAD", "PATCH", "TRACE"],
-    response_class=JSONResponse,
-    name='aaa',
-    tags=['Other Services'], description='其它服务嵌入'
-)
-async def relay(request: Request, endpoint: str):
-    return JSONResponse({'hello': 'world', 'api': endpoint})
+app.include_router(relay_router)
 
 
-@app.get("/.well-known/nodeinfo", response_class=JSONResponse, tags=['.well-known'], name='NodeinfoLinks',response_model=wand_env.NODE_INFO_LINKS)
+@app.get("/.well-known/nodeinfo", response_class=JSONResponse, tags=['.well-known'], name='NodeinfoLinks', response_model=wand_env.NODE_INFO_LINKS)
 async def nodeinfolinks():
     return wand_env.NODE_INFO_LINKS
 
 
-@app.get("/nodeinfo/2.1", response_class=JSONResponse, tags=['.well-known'], name='Nodeinfo',response_model=wand_env.NODE_INFO)
+@app.get("/nodeinfo/2.1", response_class=JSONResponse, tags=['.well-known'], name='Nodeinfo', response_model=wand_env.NODE_INFO)
 async def nodeinfo():
     res = wand_env.NODE_INFO
-    res.usage.users.total=1
+    res.usage.users.total = 1
     return res
 
 app.mount("/", StaticFiles(directory=os.path.join(os.path.dirname(
