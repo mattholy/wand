@@ -86,7 +86,3 @@ async def nodeinfo():
 
 app.mount("/", StaticFiles(directory=os.path.join(os.path.dirname(
     os.path.abspath(__file__)), "web"), html=True), name="wand-Zero")
-
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run('main:app', host="localhost", port=8080, reload=True)
