@@ -23,6 +23,7 @@ from model import activitypub_model
 VERSION = os.environ.get('WD_VERSION', 'DEV')
 SERVER_URL = os.environ.get('WD_SERVER_URL', 'localhost')
 ADMIN_PUB_KEY = os.environ.get('WD_ADMIN_PGP_PUB_KEYFILE', 'localhost')
+USER_AGENT = f'Wand/{VERSION}'
 
 # Base Info
 NODE_INFO_LINKS = activitypub_model.NodeinfoLinks(links=[
