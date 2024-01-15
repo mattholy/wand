@@ -27,6 +27,7 @@ logger = logging.getLogger('')
 async def decode_activity(request: Request) -> (activitypub_model.Activity, activitypub_model.Actor,bytes):
     body = await request.body()
     # Verify HTTP Signature
+    print(body)
     signature_parts = {}
     for part in request.headers.get('signature').split(","):
         key, value = part.strip().split("=", 1)
@@ -38,7 +39,8 @@ async def decode_activity(request: Request) -> (activitypub_model.Activity, acti
         res_of_key = res_of_key.json()
         pub_key = res_of_key['publicKey']['publicKeyPem']
     except Exception as e:
-        logg?????????
+        pass
+    print(pub_key)
     verifier = HeaderVerifier(
         headers=request.headers,
         required_headers=["(request-target)","host", "date", "digest", "content-type"],

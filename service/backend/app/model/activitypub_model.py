@@ -12,94 +12,143 @@ Data Model of ActivityPUB
 @License :   MIT License
 '''
 
-from pydantic import BaseModel, AnyUrl, HttpUrl
+from pydantic import BaseModel, Field, AnyUrl, HttpUrl
 from typing import List, Dict, Optional, Any
 
-
 class PublicKey(BaseModel):
-    id: Optional[str]
-    owner: Optional[str]
-    public_key_pem: Optional[str]
+    id: Optional[str] = Field(None, alias='id')
+    owner: Optional[str] = Field(None, alias='owner')
+    public_key_pem: Optional[str] = Field(None, alias='publicKeyPem')
+
+    class Config:
+        allow_population_by_field_name = True
 
 class Endpoints(BaseModel):
-    shared_inbox: Optional[str]
+    shared_inbox: Optional[str] = Field(None, alias='sharedInbox')
+
+    class Config:
+        allow_population_by_field_name = True
 
 class Image(BaseModel):
-    url: Optional[str]
+    url: Optional[str] = Field(None, alias='url')
+
+    class Config:
+        allow_population_by_field_name = True
 
 class Actor(BaseModel):
-    context: Any
-    id: Optional[str]
-    type: Optional[str]
-    name: Optional[str]
-    preferred_username: Optional[str]
-    summary: Optional[str]
-    inbox: Optional[str]
-    endpoints: Optional[Endpoints]
-    public_key: Optional[PublicKey]
-    icon: Optional[Image]
-    image: Optional[Image]
+    context: Any = Field(..., alias='@context')
+    id: Optional[str] = Field(None, alias='id')
+    type: Optional[str] = Field(None, alias='type')
+    name: Optional[str] = Field(None, alias='name')
+    preferred_username: Optional[str] = Field(None, alias='preferredUsername')
+    summary: Optional[str] = Field(None, alias='summary')
+    inbox: Optional[str] = Field(None, alias='inbox')
+    endpoints: Optional[Endpoints] = Field(None, alias='endpoints')
+    public_key: Optional[PublicKey] = Field(None, alias='publicKey')
+    icon: Optional[Image] = Field(None, alias='icon')
+    image: Optional[Image] = Field(None, alias='image')
+
+    class Config:
+        allow_population_by_field_name = True
 
 class Activity(BaseModel):
-    context: Any
-    id: Optional[str]
-    actor: Optional[str]
-    type: Optional[str]
-    object: Any
-    to: Optional[List[str]]
-    cc: Optional[List[str]]
+    context: Any = Field(..., alias='@context')
+    id: Optional[str] = Field(None, alias='id')
+    actor: Optional[str] = Field(None, alias='actor')
+    type: Optional[str] = Field(None, alias='type')
+    object: Any = Field(..., alias='object')
+    to: Optional[List[str]] = Field(None, alias='to')
+    cc: Optional[List[str]] = Field(None, alias='cc')
+
+    class Config:
+        allow_population_by_field_name = True
 
 class Signature(BaseModel):
-    type: Optional[str]
-    creator: Optional[str]
-    created: Optional[str]
-    signature_value: Optional[str]
+    type: Optional[str] = Field(None, alias='type')
+    creator: Optional[str] = Field(None, alias='creator')
+    created: Optional[str] = Field(None, alias='created')
+    signature_value: Optional[str] = Field(None, alias='signatureValue')
+
+    class Config:
+        allow_population_by_field_name = True
 
 class WebfingerLink(BaseModel):
-    rel: Optional[str]
-    type: Optional[str]
-    href: Optional[str]
+    rel: Optional[str] = Field(None, alias='rel')
+    type: Optional[str] = Field(None, alias='type')
+    href: Optional[str] = Field(None, alias='href')
+
+    class Config:
+        allow_population_by_field_name = True
 
 class WebfingerResource(BaseModel):
-    subject: Optional[str]
-    links: Optional[List[WebfingerLink]]
+    subject: Optional[str] = Field(None, alias='subject')
+    links: Optional[List[WebfingerLink]] = Field(None, alias='links')
+
+    class Config:
+        allow_population_by_field_name = True
 
 class NodeinfoLink(BaseModel):
-    rel: str
-    href: str
+    rel: str = Field(..., alias='rel')
+    href: str = Field(..., alias='href')
+
+    class Config:
+        allow_population_by_field_name = True
 
 class NodeinfoLinks(BaseModel):
-    links: List[NodeinfoLink]
+    links: List[NodeinfoLink] = Field(..., alias='links')
+
+    class Config:
+        allow_population_by_field_name = True
 
 class NodeinfoSoftware(BaseModel):
-    name: str
-    version: str
-    repository: Optional[str]
+    name: str = Field(..., alias='name')
+    version: str = Field(..., alias='version')
+    repository: Optional[str] = Field(None, alias='repository')
+
+    class Config:
+        allow_population_by_field_name = True
 
 class NodeinfoServices(BaseModel):
-    inbound: List[str]
-    outbound: List[str]
+    inbound: List[str] = Field(..., alias='inbound')
+    outbound: List[str] = Field(..., alias='outbound')
+
+    class Config:
+        allow_population_by_field_name = True
 
 class NodeinfoUsageUsers(BaseModel):
-    total: int
-    active_month: int
-    active_halfyear: int
+    total: int = Field(...)
+    active_month: int = Field(..., alias='activeMonth')
+    active_halfyear: int = Field(..., alias='activeHalfyear')
+
+    class Config:
+        allow_population_by_field_name = True
 
 class NodeinfoUsage(BaseModel):
-    users: NodeinfoUsageUsers
+    users: NodeinfoUsageUsers = Field(..., alias='users')
+
+    class Config:
+        allow_population_by_field_name = True
 
 class NodeinfoMetadata(BaseModel):
     pass
+    class Config:
+        allow_population_by_field_name = True
 
 class Nodeinfo(BaseModel):
-    version: str
-    software: NodeinfoSoftware
-    protocols: List[str]
-    services: NodeinfoServices
-    open_registrations: bool
-    usage: NodeinfoUsage
-    metadata: NodeinfoMetadata
+    version: str = Field(..., alias='version')
+    software: NodeinfoSoftware = Field(..., alias='software')
+    protocols: List[str] = Field(..., alias='protocols')
+    services: NodeinfoServices = Field(..., alias='services')
+    open_registrations: bool = Field(..., alias='openRegistrations')
+    usage: NodeinfoUsage = Field(..., alias='usage')
+    metadata: NodeinfoMetadata = Field(..., alias='metadata')
+
+    class Config:
+        allow_population_by_field_name = True
 
 class NodeinfoResources(BaseModel):
-    nodeinfo_links: NodeinfoLinks
-    nodeinfo: Nodeinfo
+    nodeinfo_links: NodeinfoLinks = Field(..., alias='nodeinfoLinks')
+    nodeinfo: Nodeinfo = Field(..., alias='nodeinfo')
+
+    class Config:
+        allow_population_by_field_name = True
