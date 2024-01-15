@@ -17,12 +17,12 @@ import typing
 from redis_om import HashModel
 from pydantic import BaseModel
 
-from ..wand_env import REDIS_POOL
+from ..wand_env import REDIS_POOL, SERVER_URL
 
 
 class WandRelay(HashModel):
-    actor_key: str
-    domain: str
+    actor_key: str = ''
+    domain: str = SERVER_URL
     service_name: str
     service_desc: str
     service_icon: str

@@ -6,12 +6,25 @@ services:
     depends_on:
       - redis
       - postgres
+    environment:
+      - WD_SERVER_URL=test-mac.kryta.app
+      - WD_REDIS_SERVER=redis
+      - WD_POSTGRES_USER=exampleuser
+      - WD_POSTGRES_PWD=examplepass
+      - WD_POSTGRES_SERVER=postgres
+      - WD_POSTGRES_DBNAME=exampledb
+    ports:
+      - 8080:80
 
   redis:
     image: redis
+    container_name: redis
+    ports:
+      - 6379:6379
 
   postgres:
     image: postgres
+    container_name: postgres
     environment:
       POSTGRES_DB: exampledb
       POSTGRES_USER: exampleuser

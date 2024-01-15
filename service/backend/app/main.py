@@ -13,7 +13,7 @@ put some words here
 '''
 import os
 from starlette.responses import Response
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import JSONResponse
@@ -53,7 +53,7 @@ app.add_middleware(
 app.add_middleware(ProxyHeadersMiddleware)
 
 if is_new_wand():
-    from model.wand_model import WandInit
+    from .model.wand_model import WandInit
 
     @app.post(
         '/init',
@@ -62,9 +62,12 @@ if is_new_wand():
         name='Initiate New Wand'
     )
     def init(wand_init_item: WandInit):
-        new_wand = WandRelay(**WandInit)
-        new_wand.save()
-        return JSONResponse(status_code=200, content={})
+        if is_new_wand():
+            new_wand = WandRelay(**wand_init_item.dict())
+            new_wand.save()
+            return JSONResponse(status_code=200, content={})
+        else:
+            raise HTTPException(status_code=401)
 
 
 app.include_router(relay_router)

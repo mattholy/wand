@@ -20,7 +20,8 @@ from sqlalchemy import create_engine
 from .model import activitypub_model
 
 # Env
-VERSION = os.environ.get('WD_VERSION', 'DEV')
+VERSION = 'DEV' if os.environ.get(
+    'WD_VERSION', 'DEV') == '' else os.environ.get('WD_VERSION', 'DEV')
 SERVER_URL = os.environ.get('WD_SERVER_URL', 'localhost')
 ADMIN_PUB_KEY = os.environ.get('WD_ADMIN_PGP_PUB_KEYFILE', 'localhost')
 USER_AGENT = f'Wand/{VERSION}'

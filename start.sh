@@ -3,11 +3,9 @@
 required_vars=(
     "WD_SERVER_URL"
     "WD_REDIS_SERVER"
-    "WD_REDIS_PORT"
     "WD_POSTGRES_USER"
     "WD_POSTGRES_PWD"
     "WD_POSTGRES_SERVER"
-    "WD_POSTGRES_PORT"
     "WD_POSTGRES_DBNAME"
 )
 check_env_var() {
