@@ -16,7 +16,7 @@ logging
 import logging
 from colorlog import ColoredFormatter
 
-from wand_env import VERSION
+from .wand_env import VERSION
 
 
 logger = logging.getLogger()

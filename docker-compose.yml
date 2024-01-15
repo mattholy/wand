@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  wand:
+    build: .
+    depends_on:
+      - redis
+      - postgres
+
+  redis:
+    image: redis
+
+  postgres:
+    image: postgres
+    environment:
+      POSTGRES_DB: exampledb
+      POSTGRES_USER: exampleuser
+      POSTGRES_PASSWORD: examplepass
+

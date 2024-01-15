@@ -23,4 +23,5 @@ COPY --from=vue /app/dist /app/app/web
 EXPOSE 80
 
 COPY start.sh /start.sh
+RUN chmod +x /start.sh
 CMD ["/start.sh"]

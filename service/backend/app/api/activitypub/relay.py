@@ -16,10 +16,10 @@ import json
 from fastapi import Request, APIRouter
 from fastapi.responses import JSONResponse
 
-from utils.decode import decode_activity
-from utils.activitypub_protocol import ActivityEntity, ActivityResponse
-from model import activitypub_model
-from module_log import logger
+from ...utils.decode import decode_activity
+from ...utils.activitypub_protocol import ActivityEntity, ActivityResponse
+from ...model import activitypub_model
+from ...module_log import logger
 
 
 router = APIRouter()

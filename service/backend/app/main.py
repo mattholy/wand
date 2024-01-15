@@ -18,11 +18,12 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import JSONResponse
 from starlette.middleware.base import BaseHTTPMiddleware
+from uvicorn.middleware.proxy_headers import ProxyHeadersMiddleware
 
-import wand_env
-from setup import setup, is_new_wand
-from api.activitypub.relay import router as relay_router
-from model.wand_model import WandRelay
+from . import wand_env
+from .setup import setup, is_new_wand
+from .api.activitypub.relay import router as relay_router
+from .model.wand_model import WandRelay
 
 
 setup()
@@ -51,6 +52,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+app.add_middleware(ProxyHeadersMiddleware)
 
 if is_new_wand():
     from model.wand_model import WandInit

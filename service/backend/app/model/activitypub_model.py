@@ -15,25 +15,29 @@ Data Model of ActivityPUB
 from pydantic import BaseModel, Field, AnyUrl, HttpUrl
 from typing import List, Dict, Optional, Any
 
+
 class PublicKey(BaseModel):
     id: Optional[str] = Field(None, alias='id')
     owner: Optional[str] = Field(None, alias='owner')
     public_key_pem: Optional[str] = Field(None, alias='publicKeyPem')
 
     class Config:
-        allow_population_by_field_name = True
+        populate_by_name = True
+
 
 class Endpoints(BaseModel):
     shared_inbox: Optional[str] = Field(None, alias='sharedInbox')
 
     class Config:
-        allow_population_by_field_name = True
+        populate_by_name = True
+
 
 class Image(BaseModel):
     url: Optional[str] = Field(None, alias='url')
 
     class Config:
-        allow_population_by_field_name = True
+        populate_by_name = True
+
 
 class Actor(BaseModel):
     context: Any = Field(..., alias='@context')
@@ -49,7 +53,8 @@ class Actor(BaseModel):
     image: Optional[Image] = Field(None, alias='image')
 
     class Config:
-        allow_population_by_field_name = True
+        populate_by_name = True
+
 
 class Activity(BaseModel):
     context: Any = Field(..., alias='@context')
@@ -61,7 +66,8 @@ class Activity(BaseModel):
     cc: Optional[List[str]] = Field(None, alias='cc')
 
     class Config:
-        allow_population_by_field_name = True
+        populate_by_name = True
+
 
 class Signature(BaseModel):
     type: Optional[str] = Field(None, alias='type')
@@ -70,7 +76,8 @@ class Signature(BaseModel):
     signature_value: Optional[str] = Field(None, alias='signatureValue')
 
     class Config:
-        allow_population_by_field_name = True
+        populate_by_name = True
+
 
 class WebfingerLink(BaseModel):
     rel: Optional[str] = Field(None, alias='rel')
@@ -78,27 +85,31 @@ class WebfingerLink(BaseModel):
     href: Optional[str] = Field(None, alias='href')
 
     class Config:
-        allow_population_by_field_name = True
+        populate_by_name = True
+
 
 class WebfingerResource(BaseModel):
     subject: Optional[str] = Field(None, alias='subject')
     links: Optional[List[WebfingerLink]] = Field(None, alias='links')
 
     class Config:
-        allow_population_by_field_name = True
+        populate_by_name = True
+
 
 class NodeinfoLink(BaseModel):
     rel: str = Field(..., alias='rel')
     href: str = Field(..., alias='href')
 
     class Config:
-        allow_population_by_field_name = True
+        populate_by_name = True
+
 
 class NodeinfoLinks(BaseModel):
     links: List[NodeinfoLink] = Field(..., alias='links')
 
     class Config:
-        allow_population_by_field_name = True
+        populate_by_name = True
+
 
 class NodeinfoSoftware(BaseModel):
     name: str = Field(..., alias='name')
@@ -106,14 +117,16 @@ class NodeinfoSoftware(BaseModel):
     repository: Optional[str] = Field(None, alias='repository')
 
     class Config:
-        allow_population_by_field_name = True
+        populate_by_name = True
+
 
 class NodeinfoServices(BaseModel):
     inbound: List[str] = Field(..., alias='inbound')
     outbound: List[str] = Field(..., alias='outbound')
 
     class Config:
-        allow_population_by_field_name = True
+        populate_by_name = True
+
 
 class NodeinfoUsageUsers(BaseModel):
     total: int = Field(...)
@@ -121,18 +134,22 @@ class NodeinfoUsageUsers(BaseModel):
     active_halfyear: int = Field(..., alias='activeHalfyear')
 
     class Config:
-        allow_population_by_field_name = True
+        populate_by_name = True
+
 
 class NodeinfoUsage(BaseModel):
     users: NodeinfoUsageUsers = Field(..., alias='users')
 
     class Config:
-        allow_population_by_field_name = True
+        populate_by_name = True
+
 
 class NodeinfoMetadata(BaseModel):
     pass
+
     class Config:
-        allow_population_by_field_name = True
+        populate_by_name = True
+
 
 class Nodeinfo(BaseModel):
     version: str = Field(..., alias='version')
@@ -144,11 +161,12 @@ class Nodeinfo(BaseModel):
     metadata: NodeinfoMetadata = Field(..., alias='metadata')
 
     class Config:
-        allow_population_by_field_name = True
+        populate_by_name = True
+
 
 class NodeinfoResources(BaseModel):
     nodeinfo_links: NodeinfoLinks = Field(..., alias='nodeinfoLinks')
     nodeinfo: Nodeinfo = Field(..., alias='nodeinfo')
 
     class Config:
-        allow_population_by_field_name = True
+        populate_by_name = True

@@ -17,7 +17,7 @@ import sqlalchemy
 import redis
 from sqlalchemy import create_engine
 
-from model import activitypub_model
+from .model import activitypub_model
 
 # Env
 VERSION = os.environ.get('WD_VERSION', 'DEV')
@@ -54,8 +54,8 @@ NODE_INFO = activitypub_model.Nodeinfo(
 
 # DataBase
 REDIS_POOL = redis.ConnectionPool(
-    host=os.environ.get('WD_REDIS_SERVER', 'localhost'),
-    port=int(os.environ.get('WD_REDIS_PORT', 6379)),
+    host=os.environ.get('WD_REDIS_SERVER', '127.0.0.1'),
+    port=os.environ.get('WD_REDIS_PORT', '6379'),
     password=os.environ.get('WD_REDIS_PWD', None),
     max_connections=10
 )

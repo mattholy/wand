@@ -17,7 +17,7 @@ import typing
 from redis_om import HashModel
 from pydantic import BaseModel
 
-from wand_env import REDIS_POOL
+from ..wand_env import REDIS_POOL
 
 
 class WandRelay(HashModel):

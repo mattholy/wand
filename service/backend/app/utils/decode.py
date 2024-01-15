@@ -21,10 +21,12 @@ from fastapi import Request, HTTPException
 from typing import Optional
 from httpsig import HeaderVerifier
 
-from model import activitypub_model
+from ..model import activitypub_model
 
 logger = logging.getLogger('')
-async def decode_activity(request: Request) -> (activitypub_model.Activity, activitypub_model.Actor,bytes):
+
+
+async def decode_activity(request: Request) -> (activitypub_model.Activity, activitypub_model.Actor, bytes):
     body = await request.body()
     # Verify HTTP Signature
     print(body)
@@ -43,7 +45,8 @@ async def decode_activity(request: Request) -> (activitypub_model.Activity, acti
     print(pub_key)
     verifier = HeaderVerifier(
         headers=request.headers,
-        required_headers=["(request-target)","host", "date", "digest", "content-type"],
+        required_headers=["(request-target)", "host",
+                          "date", "digest", "content-type"],
         method=request.method,
         path=request.url.path,
         secret=pub_key,
@@ -57,15 +60,15 @@ async def decode_activity(request: Request) -> (activitypub_model.Activity, acti
     given_digest = request.headers.get("Digest")
     sha256_hash = hashlib.sha256()
     sha256_hash.update(body)
-    calculated_digest = "SHA-256=" + base64.b64encode(sha256_hash.digest()).decode()
+    calculated_digest = "SHA-256=" + \
+        base64.b64encode(sha256_hash.digest()).decode()
 
     if given_digest != calculated_digest:
         raise HTTPException(status_code=400, detail="Digest mismatch")
-    
+
     # Parse Activity
     try:
         activity = json.loads(body, cls=activitypub_model.Activity)
     except json.JSONDecodeError as e:
         raise HTTPException(status_code=400, detail=str(e))
     return activity, '', body
-

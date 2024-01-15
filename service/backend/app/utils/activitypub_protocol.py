@@ -19,11 +19,11 @@ import base64
 from httpsig import HeaderVerifier
 from fastapi import HTTPException, Request
 from fastapi.responses import JSONResponse
-from pydantic.error_wrappers import ValidationError
+from pydantic import ValidationError
 
-import wand_env
-from model import activitypub_model
-from module_log import logger
+from .. import wand_env
+from ..model import activitypub_model
+from ..module_log import logger
 
 
 class ActivityEntity:

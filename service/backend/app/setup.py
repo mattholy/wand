@@ -16,9 +16,9 @@ import sys
 import os
 import redis
 
-from module_log import logger
-from model.wand_model import WandRelay
-from wand_env import REDIS_POOL
+from .module_log import logger
+from .model.wand_model import WandRelay
+from .wand_env import REDIS_POOL, VERSION
 
 
 def setup() -> None:
@@ -29,21 +29,22 @@ def setup() -> None:
 
 def check_environment_variables() -> None:
     logger.info('Going to check environment variables')
-    required_vars = ['WD_SERVER_URL', 'WD_REDIS_SERVER', 'WD_REDIS_PORT', 'WD_POSTGRES_USER',
-                     'WD_POSTGRES_PWD', 'WD_POSTGRES_SERVER', 'WD_POSTGRES_PORT', 'WD_POSTGRES_DBNAME']
+    if VERSION != 'DEV':
+        required_vars = ['WD_SERVER_URL', 'WD_REDIS_SERVER', 'WD_REDIS_PORT', 'WD_POSTGRES_USER',
+                         'WD_POSTGRES_PWD', 'WD_POSTGRES_SERVER', 'WD_POSTGRES_PORT', 'WD_POSTGRES_DBNAME']
 
-    for var in required_vars:
-        if var not in os.environ:
-            logger.critical(f'Environment Variables not set: {var}')
-            bye_bye = True
-    if bye_bye:
-        sys.exit(1)
+        for var in required_vars:
+            if var not in os.environ:
+                logger.critical(f'Environment Variables not set: {var}')
+                bye_bye = True
+        if bye_bye:
+            sys.exit(1)
     logger.info('Environment variables are well-set')
 
 
 def is_new_wand() -> bool:
-    key_pattern = WandRelay.Meta.key_pattern()
-    wand_redis = redis.Redis(REDIS_POOL)
-    if wand_redis.exists(key_pattern):
+    key_pattern = "WandRelay:*"
+    wand_redis = redis.Redis(connection_pool=REDIS_POOL)
+    if wand_redis.keys(key_pattern):
         return False
     return True
