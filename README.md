@@ -38,6 +38,7 @@ services:
       - WD_REDIS_PORT=6379 # Optional, default is 6379
       - WD_REDIS_PWD=redis # Optional, default is None
       - WD_POSTGRES_SERVER=wand-postgres
+      - WD_POSTGRES_PORT=5432 # Optional, default is 5432
       - WD_POSTGRES_DBNAME=wand # Change this for your own
       - WD_POSTGRES_USER=wand # Change this for your own
       - WD_POSTGRES_PWD=wand # Change this for your own
