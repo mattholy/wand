@@ -13,15 +13,29 @@ Data model of wand system
 '''
 
 import redis
+import typing
 from redis_om import HashModel
+from pydantic import BaseModel
 
 from wand_env import REDIS_POOL
 
 
 class WandRelay(HashModel):
-    name: str
-    price: float
-    in_stock: int
+    actor_key: str
+    domain: str
+    service_name: str
+    service_desc: str
+    service_icon: str
+    service_image: str
+    admin_gpg_public_key: str
 
     class Meta:
         database = redis.Redis(connection_pool=REDIS_POOL)
+
+
+class WandInit(BaseModel):
+    service_name: str
+    service_desc: str
+    service_icon: str
+    service_image: str
+    admin_gpg_public_key: str
