@@ -55,7 +55,7 @@ NODE_INFO = activitypub_model.Nodeinfo(
 # DataBase
 REDIS_POOL = redis.ConnectionPool(
     host=os.environ.get('WD_REDIS_SERVER', 'localhost'),
-    port=os.environ.get('WD_REDIS_PORT', 6379),
+    port=int(os.environ.get('WD_REDIS_PORT', 6379)),
     password=os.environ.get('WD_REDIS_PWD', None),
     max_connections=10
 )
