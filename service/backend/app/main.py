@@ -21,12 +21,10 @@ from starlette.middleware.base import BaseHTTPMiddleware
 from uvicorn.middleware.proxy_headers import ProxyHeadersMiddleware
 
 from . import wand_env
-from .setup import setup, is_new_wand
+from .setup import is_new_wand
 from .api.activitypub.relay import router as relay_router
 from .model.wand_model import WandRelay
 
-
-setup()
 
 app = FastAPI(
     title="wand",

@@ -17,11 +17,11 @@ COPY service/backend/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY service/backend .
-
 COPY --from=vue /app/dist /app/app/web
-
-EXPOSE 80
 
 COPY start.sh /start.sh
 RUN chmod +x /start.sh
+
+EXPOSE 80
+
 CMD ["/start.sh"]
