@@ -55,6 +55,14 @@ app.add_middleware(
 app.add_middleware(ProxyHeadersMiddleware)
 
 
+@app.get('/init', tags=['Init'], name='Check Status of New Wand')
+def init_status():
+    if is_new_wand():
+        return JSONResponse({'new_wand': True})
+    else:
+        return JSONResponse({'new_wand': True})
+
+
 @app.post(
     '/init',
     response_class=JSONResponse,
@@ -65,7 +73,7 @@ def init(wand_init_item: WandInit):
     print(wand_init_item.admin_gpg_public_key)
     if is_new_wand():
         logger.info('Initializing new wand ...')
-        sec, pub = gen_kry_pair()
+        sec, pub = gen_key_pair()
         new_wand = WandRelay(
             actor_key_sec=sec, actor_key_pub=pub, **wand_init_item.model_dump())
         new_wand.save()

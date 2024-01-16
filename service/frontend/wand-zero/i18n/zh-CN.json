@@ -1,5 +1,33 @@
 {
     "ui": {
+        "init":{
+            "main_card":{
+                "title":"注册基础信息",
+                "item":{
+                    "name":{
+                        "title":"服务器名称",
+                        "palceholder":"Kryta's Wand"
+                    },
+                    "desc":{
+                        "title":"服务器简介",
+                        "palceholder":"A very first Wand relay hosted by Kryta"
+                    },
+                    "icon":{
+                        "title":"服务器头像",
+                        "palceholder":"222"
+                    },
+                    "image":{
+                        "title":"服务器题图",
+                        "palceholder":"222"
+                    },
+                    "gpg":{
+                        "title":"管理员GPG公钥",
+                        "palceholder":"-----BEGIN PGP PUBLIC KEY BLOCK-----\n\nmDMEZXqH4BYJKwYBBAHaRw8BAQdAxHk/ptPAhjH597TFVp0erGJZbE9erLeambLI\nzAdT4SO0MU1hdHRob2x5IChKdXN0aWNlIGFuZCBPcmRlcikgPG1hdHRob2x5QGty\neXRhLmFwcD6IkwQTFgoAOxYhBJpXE+2DkTVQkoeZxIs63onZKZ72BQJleofgAhsD\nBQsJCAcCAiICBhUKCQgLAgQWAgMBAh4HAheAAAoJEIs63onZKZ72zAkBALIxbIcy\nET+1lxIPCO1JwYZrYdlLfXys+y3/K0TvDcstAQDIDN/5eB1GurOBuNG6PpkGxnVi\nwiRK7k1ZqXqB7UlkALg4BGV6h+ASCisGAQQBl1UBBQEBB0ABhAkwAVUGXMVIBMNS\nxozyqOVT5LWpzUfVcD77Br9jIgMBCAeIeAQYFgoAIBYhBJpXE+2DkTVQkoeZxIs6\n3onZKZ72BQJleofgAhsMAAoJEIs63onZKZ723NYA/1uDRhxdQZG0Ncqe20cB0EPP\n7GVE5B7+wBQ+P/XcGyEFAP93QdowFLk7iSDXrnj1MAARvzyl2+XLaN2Kb1OJkOXe\nC7gzBGV6iEwWCSsGAQQB2kcPAQEHQCbeaAwIYcZ05pGd1W8Jye7bR0r63KEf3Q9Q\n844/htOEiHgEGBYKACAWIQSaVxPtg5E1UJKHmcSLOt6J2Sme9gUCZXqITAIbIAAK\nCRCLOt6J2Sme9goTAQAAwbf3L3ZGdNZAoDPxY862EsC69jIa4VE0R1ZP78IcSAD/\nRcie8QBQHCqECfmPe65mz3QPEJuAzq9iBgE/J3fywgk=\n=gPyQ\n-----END PGP PUBLIC KEY BLOCK-----"
+                    }
+                },
+                "bnt_submit":"提交"
+            }
+        },
         "index": {
             "desc": "你好，世界"
         },
