@@ -25,6 +25,7 @@ from .setup import is_new_wand
 from .api.activitypub.relay import router as relay_router
 from .model.wand_model import WandRelay, WandInit
 from .module_log import logger
+from .utils.rsa import gen_key_pair
 
 
 app = FastAPI(
@@ -61,10 +62,14 @@ app.add_middleware(ProxyHeadersMiddleware)
     name='Initialize New Wand'
 )
 def init(wand_init_item: WandInit):
+    print(wand_init_item.admin_gpg_public_key)
     if is_new_wand():
         logger.info('Initializing new wand ...')
-        new_wand = WandRelay(**wand_init_item.model_dump())
+        sec, pub = gen_kry_pair()
+        new_wand = WandRelay(
+            actor_key_sec=sec, actor_key_pub=pub, **wand_init_item.model_dump())
         new_wand.save()
+        logger.info('Wand is now up')
         return JSONResponse(status_code=200, content=None)
     else:
         logger.warn('Can not initialize again')

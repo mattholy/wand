@@ -15,15 +15,17 @@ Data model of wand system
 import redis
 import typing
 import uuid
-from redis_om import HashModel
+from redis_om import HashModel, Field
 from pydantic import BaseModel
 
 from ..wand_env import REDIS_POOL, SERVER_URL
 
 
 class WandRelay(HashModel):
-    actor_key: str = str(uuid.uuid4())  # RSA KEY
-    domain: str = SERVER_URL
+    wand_id: str = str(uuid.uuid4())
+    actor_key_sec: str
+    actor_key_pub: str
+    service_domain: str = SERVER_URL
     service_name: str
     service_desc: str
     service_icon: str

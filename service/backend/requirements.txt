@@ -8,3 +8,5 @@ sqlalchemy
 redis
 redis-om
 psycopg2-binary
+cryptography
+python-gnupg

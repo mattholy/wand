@@ -1,21 +1,21 @@
 version: '3.8'
 
 services:
-  wand:
-    build: .
-    depends_on:
-      - redis
-      - postgres
-    environment:
-      - WD_SERVER_URL=test-mac.kryta.app
-      - WD_REDIS_SERVER=redis
-      - WD_POSTGRES_USER=wand
-      - WD_POSTGRES_PWD=password_of_wand
-      - WD_POSTGRES_SERVER=postgres
-      - WD_POSTGRES_DBNAME=wand
-      - WD_WORKERS=1
-    ports:
-      - 8080:80
+  # wand:
+  #   build: .
+  #   depends_on:
+  #     - redis
+  #     - postgres
+  #   environment:
+  #     - WD_SERVER_URL=test-mac.kryta.app
+  #     - WD_REDIS_SERVER=redis
+  #     - WD_POSTGRES_USER=wand
+  #     - WD_POSTGRES_PWD=password_of_wand
+  #     - WD_POSTGRES_SERVER=postgres
+  #     - WD_POSTGRES_DBNAME=wand
+  #     - WD_WORKERS=1
+  #   ports:
+  #     - 8080:80
 
   redis:
     image: redis
