@@ -11,7 +11,7 @@ import router from './router'
 import enUS from '../i18n/en-US.json'
 import zhCN from '../i18n/zh-CN.json'
 
-const browserLanguage = navigator.language.replace('-','')
+const browserLanguage = navigator.language.replace('-', '')
 
 const app = createApp(App)
 const i18n = createI18n({
@@ -19,7 +19,9 @@ const i18n = createI18n({
     messages: {
         zhCN,
         enUS
-    }
+    },
+    fallbackLocale: 'zhCN',
+    legacy: false
 })
 
 app.use(createPinia())

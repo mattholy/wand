@@ -1,9 +1,9 @@
 <script setup>
-import { ref, onMounted } from 'vue'
-import axios from 'axios'
-import PageInitVue from './views/PageInit.vue'
+import { ref, onMounted } from 'vue';
+import axios from 'axios';
+import PageInitVue from './views/PageInit.vue';
 
-const showRouterView = ref(false)
+const showRouterView = ref(false);
 
 onMounted(async () => {
   try {
@@ -15,12 +15,14 @@ onMounted(async () => {
   } catch (error) {
     console.error(error)
   }
-})
+});
 </script>
 
 <template>
-  <RouterView v-if="showRouterView" />
-  <PageInitVue v-else />
+  <n-message-provider>
+    <RouterView v-if="showRouterView" />
+    <PageInitVue v-else />
+  </n-message-provider>
 </template>
 
 <style scoped></style>
