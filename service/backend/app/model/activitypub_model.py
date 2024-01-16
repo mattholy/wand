@@ -12,7 +12,7 @@ Data Model of ActivityPUB
 @License :   MIT License
 '''
 
-from pydantic import BaseModel, Field, AnyUrl, HttpUrl
+from pydantic import BaseModel, ConfigDict, Field, AnyUrl, HttpUrl
 from typing import List, Dict, Optional, Any
 
 
@@ -129,12 +129,11 @@ class NodeinfoServices(BaseModel):
 
 
 class NodeinfoUsageUsers(BaseModel):
-    total: int = Field(...)
-    active_month: int = Field(..., alias='activeMonth')
-    active_halfyear: int = Field(..., alias='activeHalfyear')
+    model_config = ConfigDict(populate_by_name=True)
 
-    class Config:
-        populate_by_name = True
+    total: int = Field(...)
+    activeMonth: int = Field(..., alias='active_month')
+    activeHalfyear: int = Field(..., alias='active_halfyear')
 
 
 class NodeinfoUsage(BaseModel):
@@ -156,7 +155,7 @@ class Nodeinfo(BaseModel):
     software: NodeinfoSoftware = Field(..., alias='software')
     protocols: List[str] = Field(..., alias='protocols')
     services: NodeinfoServices = Field(..., alias='services')
-    open_registrations: bool = Field(..., alias='openRegistrations')
+    openRegistrations: bool = Field(..., alias='open_registrations')
     usage: NodeinfoUsage = Field(..., alias='usage')
     metadata: NodeinfoMetadata = Field(..., alias='metadata')
 
