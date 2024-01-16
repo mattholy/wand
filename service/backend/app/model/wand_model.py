@@ -22,7 +22,7 @@ from ..wand_env import REDIS_POOL, SERVER_URL
 
 
 class WandRelay(HashModel):
-    actor_key: str = str(uuid.uuid4())
+    actor_key: str = str(uuid.uuid4())  # RSA KEY
     domain: str = SERVER_URL
     service_name: str
     service_desc: str

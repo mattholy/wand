@@ -22,7 +22,7 @@ from .wand_env import REDIS_POOL, VERSION
 
 
 def is_new_wand() -> bool:
-    key_pattern = "WandRelay:*"
+    key_pattern = ":app.model.wand_model.WandRelay:*"
     wand_redis = redis.Redis(connection_pool=REDIS_POOL)
     if wand_redis.keys(key_pattern):
         return False

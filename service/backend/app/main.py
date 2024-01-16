@@ -23,7 +23,8 @@ from uvicorn.middleware.proxy_headers import ProxyHeadersMiddleware
 from . import wand_env
 from .setup import is_new_wand
 from .api.activitypub.relay import router as relay_router
-from .model.wand_model import WandRelay
+from .model.wand_model import WandRelay, WandInit
+from .module_log import logger
 
 
 app = FastAPI(
@@ -52,22 +53,23 @@ app.add_middleware(
 )
 app.add_middleware(ProxyHeadersMiddleware)
 
-if is_new_wand():
-    from .model.wand_model import WandInit
 
-    @app.post(
-        '/init',
-        response_class=JSONResponse,
-        tags=['Init'],
-        name='Initiate New Wand'
-    )
-    def init(wand_init_item: WandInit):
-        if is_new_wand():
-            new_wand = WandRelay(**wand_init_item.dict())
-            new_wand.save()
-            return JSONResponse(status_code=200, content={})
-        else:
-            raise HTTPException(status_code=401)
+@app.post(
+    '/init',
+    response_class=JSONResponse,
+    tags=['Init'],
+    name='Initialize New Wand'
+)
+def init(wand_init_item: WandInit):
+    if is_new_wand():
+        logger.info('Initializing new wand ...')
+        new_wand = WandRelay(**wand_init_item.model_dump())
+        new_wand.save()
+        return JSONResponse(status_code=200, content=None)
+    else:
+        logger.warn('Can not initialize again')
+        raise HTTPException(
+            status_code=405, detail='Can not initialize again. If you want to reset, just clear all the database.')
 
 
 app.include_router(relay_router)

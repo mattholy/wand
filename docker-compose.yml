@@ -9,10 +9,11 @@ services:
     environment:
       - WD_SERVER_URL=test-mac.kryta.app
       - WD_REDIS_SERVER=redis
-      - WD_POSTGRES_USER=exampleuser
-      - WD_POSTGRES_PWD=examplepass
+      - WD_POSTGRES_USER=wand
+      - WD_POSTGRES_PWD=password_of_wand
       - WD_POSTGRES_SERVER=postgres
-      - WD_POSTGRES_DBNAME=exampledb
+      - WD_POSTGRES_DBNAME=wand
+      - WD_WORKERS=1
     ports:
       - 8080:80
 
@@ -26,7 +27,9 @@ services:
     image: postgres
     container_name: postgres
     environment:
-      POSTGRES_DB: exampledb
-      POSTGRES_USER: exampleuser
-      POSTGRES_PASSWORD: examplepass
+      POSTGRES_DB: wand
+      POSTGRES_USER: wand
+      POSTGRES_PASSWORD: password_of_wand
+    ports:
+      - 5432:5432
 
