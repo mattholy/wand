@@ -112,6 +112,7 @@ Just clone this repo.
 ### Backend
 - `cd service/backend`
 - `pip install -r requirements.txt`
+- `python run_dev.py`
 
 ## Future Plan & Request
 - See to Issues
