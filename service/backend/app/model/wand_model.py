@@ -28,8 +28,8 @@ class WandRelay(HashModel):
     service_domain: str = SERVER_URL
     service_name: str
     service_desc: str
-    service_icon: str
-    service_image: str
+    service_icon: str = None
+    service_image: str = None
     admin_gpg_public_key: str
 
     class Meta:
@@ -39,6 +39,5 @@ class WandRelay(HashModel):
 class WandInit(BaseModel):
     service_name: str
     service_desc: str
-    service_icon: str
-    service_image: str
     admin_gpg_public_key: str
+    agreements: bool

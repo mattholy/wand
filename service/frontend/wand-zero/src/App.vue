@@ -11,7 +11,6 @@ onMounted(async () => {
     if (response.data.new_wand == false) {
       showRouterView.value = true
     }
-    console.log(response.data.new_wand)
   } catch (error) {
     console.error(error)
   }
