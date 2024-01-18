@@ -74,6 +74,7 @@ const init_table = ref({
 
 });
 
+const apiBaseUrl = import.meta.env.VITE_API_URL;
 const message = useMessage();
 const rules = {
     service_name: [{
@@ -117,10 +118,13 @@ function submit(e) {
             loading_submit.value = true
             message.success(t('message.init.submit.can_submit'))
             fetch(
-                '/init',
+                `${apiBaseUrl}/init`,
                 {
                     method: 'post',
-                    body: JSON.stringify(init_table)
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(init_table.value)
                 }
             )
                 .then((res) => res.json())

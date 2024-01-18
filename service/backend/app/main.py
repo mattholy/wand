@@ -60,7 +60,7 @@ def init_status():
     if is_new_wand():
         return JSONResponse({'new_wand': True})
     else:
-        return JSONResponse({'new_wand': True})
+        return JSONResponse({'new_wand': False})
 
 
 @app.post(
