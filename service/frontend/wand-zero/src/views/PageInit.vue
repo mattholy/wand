@@ -9,32 +9,35 @@
                         content: true,
                         footer: 'soft'
                     }" size="huge">
-                        <n-flex vertical>
-                            <n-grid cols="2" x-gap="12">
-                                <n-gi>
-                                    <n-form-item path="service_name" :label="$t('ui.init.main_card.item.name.title')"
-                                        required>
-                                        <n-input v-model:value="init_table.service_name" type="text"
-                                            :placeholder="$t('ui.init.main_card.item.name.palceholder')" />
-                                    </n-form-item>
-                                </n-gi>
-                                <n-gi>
-                                    <n-form-item path="service_desc" :label="$t('ui.init.main_card.item.desc.title')"
-                                        required>
-                                        <n-input v-model:value="init_table.service_desc" type="text"
-                                            :placeholder="$t('ui.init.main_card.item.desc.palceholder')" />
-                                    </n-form-item>
-                                </n-gi>
-                            </n-grid>
-                            <n-form-item path="admin_gpg_public_key"
-                                :label="$t('ui.init.main_card.item.admin_gpg_public_key.title')" required>
-                                <n-input v-model:value="init_table.admin_gpg_public_key" type="textarea"
-                                    :placeholder="$t('ui.init.main_card.item.admin_gpg_public_key.palceholder')" :autosize="{
-                                        minRows: 17,
-                                        maxRows: 17
-                                    }" style="width: 600px;" />
-                            </n-form-item>
-                        </n-flex>
+                        <n-scrollbar style="max-height: 550px">
+                            <n-flex vertical>
+                                <n-grid cols="2" x-gap="12">
+                                    <n-gi>
+                                        <n-form-item path="service_name" :label="$t('ui.init.main_card.item.name.title')"
+                                            required>
+                                            <n-input v-model:value="init_table.service_name" type="text"
+                                                :placeholder="$t('ui.init.main_card.item.name.palceholder')" />
+                                        </n-form-item>
+                                    </n-gi>
+                                    <n-gi>
+                                        <n-form-item path="service_desc" :label="$t('ui.init.main_card.item.desc.title')"
+                                            required>
+                                            <n-input v-model:value="init_table.service_desc" type="text"
+                                                :placeholder="$t('ui.init.main_card.item.desc.palceholder')" />
+                                        </n-form-item>
+                                    </n-gi>
+                                </n-grid>
+                                <n-form-item path="admin_gpg_public_key"
+                                    :label="$t('ui.init.main_card.item.admin_gpg_public_key.title')" required>
+                                    <n-input v-model:value="init_table.admin_gpg_public_key" type="textarea"
+                                        :placeholder="$t('ui.init.main_card.item.admin_gpg_public_key.palceholder')"
+                                        :autosize="{
+                                            minRows: 17,
+                                            maxRows: 17
+                                        }" style="width: 600px;" />
+                                </n-form-item>
+                            </n-flex>
+                        </n-scrollbar>
                         <template #footer>
                             <n-form-item path="agreements" :label="$t('ui.init.main_card.item.agreements.title')" required>
                                 <n-checkbox v-model:checked="init_table.agreements" />
