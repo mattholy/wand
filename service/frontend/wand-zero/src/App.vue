@@ -26,8 +26,10 @@ onMounted(async () => {
 
 <template>
   <n-message-provider>
-    <RouterView v-if="showRouterView" />
-    <PageErr v-else />
+    <n-loading-bar-provider>
+      <RouterView v-if="showRouterView" />
+      <PageErr v-else />
+    </n-loading-bar-provider>
   </n-message-provider>
 </template>
 
