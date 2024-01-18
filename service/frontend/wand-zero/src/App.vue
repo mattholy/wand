@@ -7,7 +7,8 @@ const showRouterView = ref(false);
 
 onMounted(async () => {
   try {
-    const response = await axios.get('http://localhost:8080/init')
+    const apiBaseUrl = import.meta.env.VITE_API_URL;
+    const response = await axios.get(`${apiBaseUrl}/init`);
     if (response.data.new_wand == false) {
       showRouterView.value = true
     }
