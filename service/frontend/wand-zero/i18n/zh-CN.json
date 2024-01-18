@@ -40,6 +40,12 @@
             "submit": {
                 "can_not_submit": "你需要填写完成全部字段",
                 "can_submit": "正在为您激活"
+            },
+            "server": {
+                "ok": "完成",
+                "can_not_init_again": "Wand已经初始化了，无法重复初始化，如果要重置，请清空数据库",
+                "request_body_unknown": "初始化失败：提供的信息无法识别",
+                "server_error": "Wand后台进程出现故障，请检查日志"
             }
         }
     }

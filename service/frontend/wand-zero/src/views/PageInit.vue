@@ -60,7 +60,7 @@
 import { ref } from 'vue';
 import { useMessage } from "naive-ui";
 import { useI18n } from 'vue-i18n';
-import backgroundImage from '@/assets/img/bg.jpg'
+import { useRouter } from 'vue-router';
 
 
 const { t } = useI18n();
@@ -74,6 +74,7 @@ const init_table = ref({
 
 });
 
+const router = useRouter();
 const apiBaseUrl = import.meta.env.VITE_API_URL;
 const message = useMessage();
 const rules = {
@@ -116,7 +117,7 @@ function submit(e) {
     form_init.value?.validate()
         .then(() => {
             loading_submit.value = true
-            message.success(t('message.init.submit.can_submit'))
+            message.loading(t('message.init.submit.can_submit'))
             fetch(
                 `${apiBaseUrl}/init`,
                 {
@@ -127,15 +128,33 @@ function submit(e) {
                     body: JSON.stringify(init_table.value)
                 }
             )
-                .then((res) => res.json())
+                .then((res) => {
+                    if (res.status >= 400 && res.status < 500) {
+                        return res.json().then(body => {
+                            if (body.detail == 'can_not_init_again') {
+                                setTimeout(() => {
+                                    router.push('/')
+                                }, 1000)
+                            }
+                            throw new Error(body.detail);
+                        });
+                    } else if (res.status >= 500 && res.status < 600) {
+                        throw new Error('server_error');
+                    } else {
+                        return res.json()
+                    }
+                })
                 .then((data) => {
-                    message.success(data);
+                    message.success(t('message.init.server.' + data.msg));
                     loading_submit.value = false;
+                    setTimeout(() => {
+                        router.push('/')
+                    }, 1000)
                 })
                 .catch((e) => {
                     loading_submit.value = false;
-                    message.error(e);
-                });
+                    message.error(t('message.init.server.' + e.message));
+                })
         })
         .catch(() => {
             message.error(t('message.init.submit.can_not_submit'))

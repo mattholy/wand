@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import PageIndex from '@/views/PageIndex.vue'
 import PageAdmin from '@/views/PageAdmin.vue'
+import PageInit from '@/views/PageInit.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -16,6 +17,11 @@ const router = createRouter({
       name: 'Admin',
       meta: { requiresAuth: true },
       component: PageAdmin
+    },
+    {
+      path: '/init',
+      name: 'Init',
+      component: PageInit
     }
   ]
 })

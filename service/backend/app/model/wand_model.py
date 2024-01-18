@@ -28,9 +28,10 @@ class WandRelay(HashModel):
     service_domain: str = SERVER_URL
     service_name: str
     service_desc: str
-    service_icon: str = None
-    service_image: str = None
+    service_icon: str = ""
+    service_image: str = ""
     admin_gpg_public_key: str
+    agreements: str = 'False'
 
     class Meta:
         database = redis.Redis(connection_pool=REDIS_POOL)

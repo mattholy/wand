@@ -1,4 +1,4 @@
-version: '3.8'
+version: "3.8"
 
 services:
   # wand:
@@ -32,4 +32,3 @@ services:
       POSTGRES_PASSWORD: password_of_wand
     ports:
       - 5432:5432
-

@@ -12,6 +12,7 @@ put some words here
 @License :   MIT License
 '''
 import os
+import redis
 from starlette.responses import Response
 from fastapi import FastAPI, Request, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -19,6 +20,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.responses import JSONResponse
 from starlette.middleware.base import BaseHTTPMiddleware
 from uvicorn.middleware.proxy_headers import ProxyHeadersMiddleware
+
 
 from . import wand_env
 from .setup import is_new_wand
@@ -70,19 +72,21 @@ def init_status():
     name='Initialize New Wand'
 )
 def init(wand_init_item: WandInit):
-    print(wand_init_item.admin_gpg_public_key)
     if is_new_wand():
         logger.info('Initializing new wand ...')
         sec, pub = gen_key_pair()
         new_wand = WandRelay(
             actor_key_sec=sec, actor_key_pub=pub, **wand_init_item.model_dump())
-        new_wand.save()
-        logger.info('Wand is now up')
-        return JSONResponse(status_code=200, content=None)
+        try:
+            new_wand.save()
+            logger.info('Wand is now up')
+            return JSONResponse(status_code=200, content={'wand_code': 0, 'wand_msg': 'ok', 'wand_data': None})
+        except redis.exceptions.DataError as e:
+            raise HTTPException(status_code=405, detail='request_body_unknown')
     else:
         logger.warn('Can not initialize again')
         raise HTTPException(
-            status_code=405, detail='Can not initialize again. If you want to reset, just clear all the database.')
+            status_code=405, detail='can_not_init_again')
 
 
 app.include_router(relay_router)
