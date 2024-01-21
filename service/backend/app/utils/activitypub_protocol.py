@@ -47,10 +47,14 @@ class ActivityAction:
         self.actor, self.wr = get_wand_actor_and_wr()
 
         if self.incoming_activity.type == 'Follow':
+            logger.info(
+                f'Receiving Follow request from {self.incoming_activity.actor} with body: {self.incoming_activity}'
+            )
             self.accept()
         else:
-            logger.warning(
-                f'Received request from {self.incoming_activity.actor} type as {self.incoming_activity.type}, not handled.')
+            logger.error(
+                f'Received request from {self.incoming_activity.actor} with type {self.incoming_activity.type}, not handled. Raw body is {self.incoming_activity}'
+            )
 
     def sign(self, msg: activitypub_model.Activity) -> Tuple[str, dict, HTTPSignatureAuth]:
         body = msg.model_dump_json(by_alias=True)

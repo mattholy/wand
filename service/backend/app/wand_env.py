@@ -58,7 +58,8 @@ REDIS_POOL = redis.ConnectionPool(
     host=os.environ.get('WD_REDIS_SERVER', '127.0.0.1'),
     port=os.environ.get('WD_REDIS_PORT', '6379'),
     password=os.environ.get('WD_REDIS_PWD', None),
-    max_connections=10
+    max_connections=10,
+    decode_responses=True
 )
 POSTGRES_POOL = create_engine(
     f"postgresql://{os.environ.get('WD_POSTGRES_USER', 'wand')}:{os.environ.get('WD_POSTGRES_PWD', 'password_of_wand')}@{os.environ.get('WD_POSTGRES_SERVER', 'localhost')}:{os.environ.get('WD_POSTGRES_PORT', '5432')}/{os.environ.get('WD_POSTGRES_DBNAME', 'wand')}",
