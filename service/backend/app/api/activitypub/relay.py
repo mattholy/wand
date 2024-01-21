@@ -29,4 +29,5 @@ router = APIRouter()
 async def relay(request: Request):
     body = await request.body()
     incoming_request = ActivityEntity(request, body)
+    print(incoming_request.activity)
     return ActivityResponse(content=None, status_code=202)

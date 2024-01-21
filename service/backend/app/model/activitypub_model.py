@@ -70,13 +70,12 @@ class Activity(BaseModel):
 
 
 class Signature(BaseModel):
+    model_config = ConfigDict(populate_by_name=True)
+
     type: Optional[str] = Field(None, alias='type')
     creator: Optional[str] = Field(None, alias='creator')
     created: Optional[str] = Field(None, alias='created')
     signature_value: Optional[str] = Field(None, alias='signatureValue')
-
-    class Config:
-        populate_by_name = True
 
 
 class WebfingerLink(BaseModel):
@@ -132,8 +131,8 @@ class NodeinfoUsageUsers(BaseModel):
     model_config = ConfigDict(populate_by_name=True)
 
     total: int = Field(...)
-    activeMonth: int = Field(..., alias='active_month')
-    activeHalfyear: int = Field(..., alias='active_halfyear')
+    active_month: int = Field(..., alias='activeMonth')
+    active_halfyear: int = Field(..., alias='activeHalfyear')
 
 
 class NodeinfoUsage(BaseModel):
