@@ -12,112 +12,106 @@ handle activity
 @License :   MIT License
 '''
 
-import requests
-import json
+import redis
+import uuid
 import hashlib
 import base64
-from httpsig import HeaderVerifier
-from fastapi import HTTPException, Request
+import datetime
+import requests
+from typing import Tuple
 from fastapi.responses import JSONResponse
-from pydantic import ValidationError
+from httpsig.requests_auth import HTTPSignatureAuth
+from httpsig.sign import HeaderSigner
 
 from .. import wand_env
 from ..model import activitypub_model
+from ..model import wand_model
 from ..module_log import logger
+from ..setup import get_wand_actor_and_wr
+from .. import wand_env
 
 
-class ActivityEntity:
+class ActivityAction:
     '''
-    handle activity
+    Actions as a activity response to remote
     '''
 
-    def __init__(self, incoming_req: Request, body: bytes) -> None:
-        self.request = incoming_req
-        self.body = body
-        self._verify_request_()
-        self._verify_digest_()
-        try:
-            self.activity = activitypub_model.Activity(
-                **(json.loads(body.decode()))
-            )
-        except ValidationError:
-            raise HTTPException(status_code=401)
-        self._fetch_remote_actor_()
+    def __init__(
+        self,
+        remoter_activity: activitypub_model.Activity,
+        remoter_actor: activitypub_model.Actor
+    ) -> None:
+        self.incoming_activity = remoter_activity
+        self.incoming_actor = remoter_actor
+        self.actor, self.wr = get_wand_actor_and_wr()
 
-    def _verify_request_(self) -> bool:
-        signature_parts = {}
-        for part in self.request.headers.get('signature').split(","):
-            key, value = part.strip().split("=", 1)
-            key = key.strip('"')
-            value = value.strip('"')
-            signature_parts[key] = value
-        try:
-            logger.debug(f'Getting public key of {signature_parts["keyId"]}')
-            res_of_key = requests.get(
-                signature_parts['keyId'],
-                headers={
-                    'User-Agent': wand_env.USER_AGENT,
-                    'Accept': 'application/activity+json'
-                }
-            )
-            res_of_key = res_of_key.json()
-            self.pub_key = activitypub_model.PublicKey(
-                **res_of_key['publicKey'])
-        except:
+        if self.incoming_activity.type == 'Follow':
+            self.accept()
+        else:
             logger.warning(
-                f'Can not retrieve public key of {signature_parts["keyId"]}')
-        verifier = HeaderVerifier(
-            headers=self.request.headers,
-            required_headers=["(request-target)", "host",
-                              "date", "digest", "content-type"],
-            method=self.request.method,
-            path=self.request.url.path,
-            secret=self.pub_key.public_key_pem,
-            sign_header='signature'
+                f'Received request from {self.incoming_activity.actor} type as {self.incoming_activity.type}, not handled.')
+
+    def sign(self, msg: activitypub_model.Activity) -> Tuple[str, dict, HTTPSignatureAuth]:
+        body = msg.model_dump_json()
+        digest = base64.b64encode(hashlib.sha256(
+            body.encode()).digest()).decode()
+        headers = {
+            'Content-Type': 'application/activity+json',
+            'Accept': 'application/activity+json',
+            'Content-Length': str(len(body)),
+            'User-Agent': wand_env.USER_AGENT,
+            'Digest': f'SHA-256={digest}',
+            'Host': self.wr.service_domain,
+            'Date': datetime.datetime.utcnow().strftime("%a, %d %b %Y %H:%M:%S GMT"),
+            'Connection': 'keep-alive'
+        }
+        headers_to_sign = ["(request-target)", "host",
+                           "date", "digest", "content-type"]
+        # auth = HTTPSignatureAuth(
+        #     key_id=self.actor.public_key.id,
+        #     secret=self.actor.public_key.public_key_pem,
+        #     algorithm='hmac-sha256',
+        #     headers=headers_to_sign
+        # )
+        signer = HeaderSigner(
+            key_id=self.actor.public_key.id,
+            secret=self.actor.public_key.public_key_pem,
+            algorithm="rsa-sha256",
+            headers=headers_to_sign
         )
-        if not verifier.verify():
-            logger.info(
-                f'Can not verify requests from {signature_parts["keyId"]}')
-            raise HTTPException(status_code=401)
+        signed_headers = signer.sign(
+            headers, method="post", path="/actor/inbox")
+        headers['Signature'] = signed_headers['Authorization'][len(
+            "Signature "):]
+        return body, headers
 
-    def _verify_digest_(self):
-        logger.debug(f'Calculating the digest of origin')
-        origin_digest = self.request.headers.get('digest')
-        hash_obj = hashlib.sha256()
-        hash_obj.update(self.body)
-        b = hash_obj.digest()
-        calculated_digest = 'SHA-256=' + base64.b64encode(b).decode('utf-8')
-        if origin_digest != calculated_digest:
-            logger.warning(
-                f'Can not verify digest of request from {json.loads(self.body.decode())["id"]}')
-            raise HTTPException(status_code=401)
-
-    def _fetch_remote_actor_(self):
+    def send_msg(self, msg: activitypub_model.Activity) -> None:
+        body, headers = self.sign(msg)
+        response = requests.post(
+            self.incoming_actor.inbox,
+            data=body,
+            headers=headers
+        )
         logger.debug(
-            f'Fetching remote actor of {json.loads(self.body.decode())["id"]}')
-        try:
-            remote_actor = requests.get(
-                self.activity.actor,
-                headers={
-                    'User-Agent': wand_env.USER_AGENT,
-                    'Accept': 'application/activity+json'
-                }
-            )
-            assert remote_actor.status_code == 200, remote_actor.status_code
-            try:
-                self.remote_actor = activitypub_model.Actor(
-                    **remote_actor.json())
-                return
-            except ValidationError:
-                logger.error(
-                    f'Unparsable data from remote actor of {json.loads(self.body.decode())["id"]}', remote_actor.json())
-        except AssertionError:
-            logger.warn(
-                f'Can not fetching remote actor of {json.loads(self.body.decode())["id"]}, because of a status code: {remote_actor.status_code}')
-        except:
-            logger.error(
-                f'Something wrong when fetching remote actor of {json.loads(self.body.decode())["id"]}', exc_info=True)
-        raise HTTPException(status_code=401)
+            f'React request to {self.incoming_actor.inbox} with headers are {response.request.headers} and body is {body}')
+        logger.debug(f'Response headers from remote is {response.headers}')
+        logger.debug(f'Response from remote is {response.text}')
+
+    def accept(self) -> bool:
+        logger.debug(
+            f'Accepting new {self.incoming_activity.type} request from {self.incoming_activity.actor}')
+        react_accept = activitypub_model.Activity(
+            context='https://www.w3.org/ns/activitystreams',
+            type='Accept',
+            to=[self.incoming_actor.id],
+            id=f'https://{wand_env.SERVER_URL}/activities/{uuid.uuid4()}',
+            actor=self.actor.id,
+            object=self.incoming_activity
+        )
+        self.send_msg(react_accept)
+
+    def undo(self) -> bool:
+        pass
 
 
 class ActivityResponse(JSONResponse):

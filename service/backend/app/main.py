@@ -26,6 +26,7 @@ from . import wand_env
 from .setup import is_new_wand
 from .api.activitypub.relay import router as relay_router
 from .model.wand_model import WandRelay, WandInit
+from .model import activitypub_model
 from .module_log import logger
 from .utils.rsa import gen_key_pair
 
@@ -92,12 +93,12 @@ def init(wand_init_item: WandInit):
 app.include_router(relay_router)
 
 
-@app.get("/.well-known/nodeinfo", response_class=JSONResponse, tags=['.well-known'], name='NodeinfoLinks', response_model=wand_env.NODE_INFO_LINKS)
+@app.get("/.well-known/nodeinfo", response_class=JSONResponse, tags=['.well-known'], name='NodeinfoLinks', response_model=activitypub_model.NodeinfoLinks)
 async def nodeinfolinks():
     return wand_env.NODE_INFO_LINKS
 
 
-@app.get("/nodeinfo/2.1", response_class=JSONResponse, tags=['.well-known'], name='Nodeinfo', response_model=wand_env.NODE_INFO)
+@app.get("/nodeinfo/2.1", response_class=JSONResponse, tags=['.well-known'], name='Nodeinfo', response_model=activitypub_model.Nodeinfo)
 async def nodeinfo():
     res = wand_env.NODE_INFO
     res.usage.users.total = 1

@@ -26,10 +26,9 @@ class PublicKey(BaseModel):
 
 
 class Endpoints(BaseModel):
-    shared_inbox: Optional[str] = Field(None, alias='sharedInbox')
+    model_config = ConfigDict(populate_by_name=True)
 
-    class Config:
-        populate_by_name = True
+    shared_inbox: Optional[str] = Field(None, alias='sharedInbox')
 
 
 class Image(BaseModel):
@@ -40,6 +39,8 @@ class Image(BaseModel):
 
 
 class Actor(BaseModel):
+    model_config = ConfigDict(populate_by_name=True)
+
     context: Any = Field(..., alias='@context')
     id: Optional[str] = Field(None, alias='id')
     type: Optional[str] = Field(None, alias='type')
@@ -52,11 +53,10 @@ class Actor(BaseModel):
     icon: Optional[Image] = Field(None, alias='icon')
     image: Optional[Image] = Field(None, alias='image')
 
-    class Config:
-        populate_by_name = True
-
 
 class Activity(BaseModel):
+    model_config = ConfigDict(populate_by_name=True)
+
     context: Any = Field(..., alias='@context')
     id: Optional[str] = Field(None, alias='id')
     actor: Optional[str] = Field(None, alias='actor')
@@ -64,9 +64,6 @@ class Activity(BaseModel):
     object: Any = Field(..., alias='object')
     to: Optional[List[str]] = Field(None, alias='to')
     cc: Optional[List[str]] = Field(None, alias='cc')
-
-    class Config:
-        populate_by_name = True
 
 
 class Signature(BaseModel):
@@ -79,52 +76,46 @@ class Signature(BaseModel):
 
 
 class WebfingerLink(BaseModel):
+    model_config = ConfigDict(populate_by_name=True)
+
     rel: Optional[str] = Field(None, alias='rel')
     type: Optional[str] = Field(None, alias='type')
     href: Optional[str] = Field(None, alias='href')
 
-    class Config:
-        populate_by_name = True
-
 
 class WebfingerResource(BaseModel):
+    model_config = ConfigDict(populate_by_name=True)
+
     subject: Optional[str] = Field(None, alias='subject')
     links: Optional[List[WebfingerLink]] = Field(None, alias='links')
 
-    class Config:
-        populate_by_name = True
-
 
 class NodeinfoLink(BaseModel):
+    model_config = ConfigDict(populate_by_name=True)
+
     rel: str = Field(..., alias='rel')
     href: str = Field(..., alias='href')
 
-    class Config:
-        populate_by_name = True
-
 
 class NodeinfoLinks(BaseModel):
-    links: List[NodeinfoLink] = Field(..., alias='links')
+    model_config = ConfigDict(populate_by_name=True)
 
-    class Config:
-        populate_by_name = True
+    links: List[NodeinfoLink] = Field(..., alias='links')
 
 
 class NodeinfoSoftware(BaseModel):
+    model_config = ConfigDict(populate_by_name=True)
+
     name: str = Field(..., alias='name')
     version: str = Field(..., alias='version')
     repository: Optional[str] = Field(None, alias='repository')
 
-    class Config:
-        populate_by_name = True
-
 
 class NodeinfoServices(BaseModel):
+    model_config = ConfigDict(populate_by_name=True)
+
     inbound: List[str] = Field(..., alias='inbound')
     outbound: List[str] = Field(..., alias='outbound')
-
-    class Config:
-        populate_by_name = True
 
 
 class NodeinfoUsageUsers(BaseModel):
@@ -136,20 +127,20 @@ class NodeinfoUsageUsers(BaseModel):
 
 
 class NodeinfoUsage(BaseModel):
-    users: NodeinfoUsageUsers = Field(..., alias='users')
+    model_config = ConfigDict(populate_by_name=True)
 
-    class Config:
-        populate_by_name = True
+    users: NodeinfoUsageUsers = Field(..., alias='users')
 
 
 class NodeinfoMetadata(BaseModel):
-    pass
+    model_config = ConfigDict(populate_by_name=True)
 
-    class Config:
-        populate_by_name = True
+    pass
 
 
 class Nodeinfo(BaseModel):
+    model_config = ConfigDict(populate_by_name=True)
+
     version: str = Field(..., alias='version')
     software: NodeinfoSoftware = Field(..., alias='software')
     protocols: List[str] = Field(..., alias='protocols')
@@ -158,13 +149,9 @@ class Nodeinfo(BaseModel):
     usage: NodeinfoUsage = Field(..., alias='usage')
     metadata: NodeinfoMetadata = Field(..., alias='metadata')
 
-    class Config:
-        populate_by_name = True
-
 
 class NodeinfoResources(BaseModel):
+    model_config = ConfigDict(populate_by_name=True)
+
     nodeinfo_links: NodeinfoLinks = Field(..., alias='nodeinfoLinks')
     nodeinfo: Nodeinfo = Field(..., alias='nodeinfo')
-
-    class Config:
-        populate_by_name = True

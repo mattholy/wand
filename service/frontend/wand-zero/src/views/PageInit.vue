@@ -148,7 +148,7 @@ function submit(e) {
                     }
                 })
                 .then((data) => {
-                    message.success(t('message.init.server.' + data.msg));
+                    message.success(t('message.init.server.' + data.wand_msg));
                     loading_submit.value = false;
                     setTimeout(() => {
                         router.push('/')
