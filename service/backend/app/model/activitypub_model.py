@@ -86,6 +86,7 @@ class WebfingerLink(BaseModel):
 class WebfingerResource(BaseModel):
     model_config = ConfigDict(populate_by_name=True)
 
+    aliases: Optional[str] = Field(None, alias='aliases')
     subject: Optional[str] = Field(None, alias='subject')
     links: Optional[List[WebfingerLink]] = Field(None, alias='links')
 

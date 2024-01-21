@@ -14,21 +14,23 @@ put some words here
 import os
 import redis
 from starlette.responses import Response
-from fastapi import FastAPI, Request, HTTPException
+from fastapi import FastAPI, Request, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import JSONResponse
 from starlette.middleware.base import BaseHTTPMiddleware
 from uvicorn.middleware.proxy_headers import ProxyHeadersMiddleware
+from typing import Optional
 
 
 from . import wand_env
-from .setup import is_new_wand
+from .setup import is_new_wand, get_wand_actor_and_wr
 from .api.activitypub.relay import router as relay_router
 from .model.wand_model import WandRelay, WandInit
 from .model import activitypub_model
 from .module_log import logger
 from .utils.rsa import gen_key_pair
+from .utils.activitypub_protocol import ActivityResponse
 
 
 app = FastAPI(
@@ -103,6 +105,39 @@ async def nodeinfo():
     res = wand_env.NODE_INFO
     res.usage.users.total = 1
     return res
+
+
+@app.get("/actor", response_class=ActivityResponse, tags=['ActivityPub'], name='Actor', response_model=activitypub_model.Actor)
+async def actor():
+    actor, wr = get_wand_actor_and_wr()
+    return ActivityResponse(content=actor.model_dump(by_alias=True))
+
+
+@app.get("/.well-known/webfinger", response_class=ActivityResponse, tags=['.well-known'], name='Webfinger', response_model=activitypub_model.WebfingerResource)
+def read_webfinger(resource: Optional[str] = Query(None, regex="acct:.+")):
+    if resource is None:
+        raise HTTPException(
+            status_code=400, detail="Missing resource parameter")
+    actor, wr = get_wand_actor_and_wr()
+    res = activitypub_model.WebfingerResource(
+        subject=resource,
+        aliases=actor.id,
+        links=[
+            activitypub_model.WebfingerLink(
+                rel='self',
+                type='application/activity+json',
+                href=actor.id
+            ),
+            activitypub_model.WebfingerLink(
+                rel='self',
+                type='application/ld+json; profile="https://www.w3.org/ns/activitystreams"',
+                href=actor.id
+            ),
+        ]
+    )
+
+    return ActivityResponse(content=res.model_dump(by_alias=True))
+
 
 app.mount("/", StaticFiles(directory=os.path.join(os.path.dirname(
     os.path.abspath(__file__)), "web"), html=True), name="wand-Zero")

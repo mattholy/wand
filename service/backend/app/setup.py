@@ -43,7 +43,8 @@ def is_new_wand() -> WandRelay:
 def get_wand_actor_and_wr() -> Tuple[activitypub_model.Actor, wand_model.WandInit]:
     wr = is_new_wand()
     wand_actor = activitypub_model.Actor(
-        context='https://www.w3.org/ns/activitystreams',
+        context=['https://www.w3.org/ns/activitystreams',
+                 "https://w3id.org/security/v1"],
         id=f'https://{wr.service_domain}/actor',
         type='Application',
         name=wr.service_name,

@@ -18,6 +18,7 @@ import hashlib
 import base64
 import datetime
 import requests
+from urllib.parse import urlparse
 from typing import Tuple
 from fastapi.responses import JSONResponse
 from httpsig.requests_auth import HTTPSignatureAuth
@@ -52,7 +53,7 @@ class ActivityAction:
                 f'Received request from {self.incoming_activity.actor} type as {self.incoming_activity.type}, not handled.')
 
     def sign(self, msg: activitypub_model.Activity) -> Tuple[str, dict, HTTPSignatureAuth]:
-        body = msg.model_dump_json()
+        body = msg.model_dump_json(by_alias=True)
         digest = base64.b64encode(hashlib.sha256(
             body.encode()).digest()).decode()
         headers = {
@@ -61,18 +62,12 @@ class ActivityAction:
             'Content-Length': str(len(body)),
             'User-Agent': wand_env.USER_AGENT,
             'Digest': f'SHA-256={digest}',
-            'Host': self.wr.service_domain,
+            'Host': urlparse(self.incoming_activity.actor).netloc,
             'Date': datetime.datetime.utcnow().strftime("%a, %d %b %Y %H:%M:%S GMT"),
             'Connection': 'keep-alive'
         }
         headers_to_sign = ["(request-target)", "host",
                            "date", "digest", "content-type"]
-        # auth = HTTPSignatureAuth(
-        #     key_id=self.actor.public_key.id,
-        #     secret=self.actor.public_key.public_key_pem,
-        #     algorithm='hmac-sha256',
-        #     headers=headers_to_sign
-        # )
         signer = HeaderSigner(
             key_id=self.actor.public_key.id,
             secret=self.actor.public_key.public_key_pem,
@@ -80,22 +75,23 @@ class ActivityAction:
             headers=headers_to_sign
         )
         signed_headers = signer.sign(
-            headers, method="post", path="/actor/inbox")
+            headers, method="post",
+            path=urlparse(self.incoming_actor.endpoints.shared_inbox).path
+        )
         headers['Signature'] = signed_headers['Authorization'][len(
             "Signature "):]
         return body, headers
 
     def send_msg(self, msg: activitypub_model.Activity) -> None:
         body, headers = self.sign(msg)
+        logger.debug(f'Sending request to remote actor with body: {body}')
         response = requests.post(
-            self.incoming_actor.inbox,
+            self.incoming_actor.endpoints.shared_inbox,
             data=body,
             headers=headers
         )
         logger.debug(
-            f'React request to {self.incoming_actor.inbox} with headers are {response.request.headers} and body is {body}')
-        logger.debug(f'Response headers from remote is {response.headers}')
-        logger.debug(f'Response from remote is {response.text}')
+            f'Response code from remote is {response.status_code} with body: {response.text}')
 
     def accept(self) -> bool:
         logger.debug(
