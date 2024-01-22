@@ -1,13 +1,38 @@
 <div align="center">
+
+<img src="./docs/logo.png" alt="Wand" width="300"/>
+
+**Wand is yet another open-source ActivityPub relay, in Python. 😘**
+
+----
+
+[![codecov](https://codecov.io/github/mattholy/wand/graph/badge.svg?token=E9FLI822U9)](https://codecov.io/github/mattholy/wand)
+
+----
+
+[🇬🇧English](README.md) | [🇨🇳中文](README_zh-CN.md)
+
+----
+
+<img src="./docs/fedi.png" height="100"/>
+
 </div>
-<p align="center">
-  <img src="./docs/logo.png" alt="Wand" width="300"/>
-</p>
 
-# Wand
-Wand is an ActivityPUB relay made with Python
+----
 
-[English](README.md) | [中文](README_zh-CN.md)
+<div>
+
+## Philosophy & Features
+
+### Connecting through the Fediverse
+
+
+
+</div>
+
+
+
+<div style="clear: both;"></div>
 
 ## Getting Start
 ActivityPUB **need** to connect through https while Wand is a naive python ASGI.
@@ -104,7 +129,7 @@ For the green hand, there is a short guide.
 - The `publickey.asc` is your gpg public key. It is safe to share with Wand and anywhere else you like (e.g. Github)
 - Be make sure to store your private key in a safe place (e.g. YubiKey)
 
-## Dev
+## Dev & Contribute
 Just clone this repo.
 
 ### Frontend
