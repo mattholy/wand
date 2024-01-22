@@ -7,13 +7,11 @@
 ----
 
 [![codecov](https://codecov.io/github/mattholy/wand/graph/badge.svg?token=E9FLI822U9)](https://codecov.io/github/mattholy/wand)
-
 ----
 
 [🇬🇧English](README.md) | [🇨🇳中文](README_zh-CN.md)
 
 ----
-
 <img src="./docs/fedi.png" height="100"/>
 
 </div>
@@ -33,6 +31,14 @@ We long for the golden age of the internet, an era tethered by email, where ever
 Wand, as a strand in the Fediverse, will devote all its strength to tirelessly work for the connection and integration of this world. We are committed to reweaving this fragmented world, to reconnect information once again. This is our mission and our promise for the future—a new era of a boundless, shared, and free internet.
 
 ### Wand Provides
+
+- Ability to connect each other as a relay or a strand
+- Ability to see the Fediverse your Wand connected
+- Dashboard to view data stats, like how many services your Wand connected
+- Easy-to-use modern interface
+- Distributed deployment, easy to scale
+- Discover other Wand in Fediverse
+- GPG identity, not username/password, for security
 
 </div>
 
