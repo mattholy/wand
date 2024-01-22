@@ -6,7 +6,17 @@
 
 ----
 
+
+![GitHub License](https://img.shields.io/github/license/mattholy/wand)
+![GitHub top language](https://img.shields.io/github/languages/top/mattholy/wand)
+![GitHub commit activity](https://img.shields.io/github/commit-activity/m/mattholy/wand)
+![GitHub issues](https://img.shields.io/github/issues-raw/mattholy/wand)
+
+![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/mattholy/wand/ci.yml)
 [![codecov](https://codecov.io/github/mattholy/wand/graph/badge.svg?token=E9FLI822U9)](https://codecov.io/github/mattholy/wand)
+
+![GitHub Release](https://img.shields.io/github/v/release/mattholy/wand)
+
 ----
 
 [🇬🇧English](README.md) | [🇨🇳中文](README_zh-CN.md)
