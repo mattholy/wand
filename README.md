@@ -1,3 +1,5 @@
+<div align="center">
+</div>
 <p align="center">
   <img src="./docs/logo.png" alt="Wand" width="300"/>
 </p>

@@ -1,0 +1,22 @@
+name: CI
+
+on:
+  push:
+    branches: [storyline]
+  pull_request:
+    branches: [storyline]
+
+jobs:
+  test-and-coverage:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check-out the repo
+        uses: actions/checkout@v2
+
+      - name: Run tests
+        run: echo ok
+
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v3
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
