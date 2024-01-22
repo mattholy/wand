@@ -1,22 +1,56 @@
-name: CI
+name: Continuous Integration
 
 on:
   push:
-    branches: [storyline]
+    branches:
+      - storyline
   pull_request:
-    branches: [storyline]
+    branches:
+      - storyline
 
 jobs:
-  test-and-coverage:
+  test-wand-core:
     runs-on: ubuntu-latest
     steps:
-      - name: Check-out the repo
-        uses: actions/checkout@v2
+      - uses: actions/checkout@v2
 
-      - name: Run tests
-        run: echo ok
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.11"
 
-      - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@v3
-        env:
-          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+      - name: Install backend dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r wand/service/backend/requirements.txt
+          pip install pytest-cov
+
+      - name: Add wand to PYTHONPATH
+        run: echo "PYTHONPATH=$PYTHONPATH:$(pwd)" >> $GITHUB_ENV
+
+      - name: Run backend tests with coverage
+        run: |
+          pytest --cov=wand/service/backend --cov-report=xml wand/service/backend/tests
+
+      - name: Upload backend coverage to Codecov
+        uses: codecov/codecov-action@v2
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: coverage.xml
+          fail_ci_if_error: true
+
+  test-wand-zero:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      # 前端测试相关步骤...
+      # 生成覆盖率报告，例如，如果是 JavaScript 项目，可能会使用 Jest 的 --coverage 标志
+
+      - name: Upload frontend coverage to Codecov
+        uses: codecov/codecov-action@v2
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          # 确保指定正确的前端覆盖率报告文件路径
+          files: frontend-coverage.xml
+          fail_ci_if_error: true
