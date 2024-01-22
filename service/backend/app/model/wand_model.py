@@ -71,7 +71,7 @@ Base = declarative_base()
 class Subscriber(Base):
     __tablename__ = 'ap_subscriber'
 
-    uri = Column(Text, primary_key=True)
+    server_id = Column(Text, unique=True, primary_key=True)
     name = Column(Text)
     desc = Column(Text)
     icon = Column(Text)
@@ -83,7 +83,6 @@ class Subscriber(Base):
                          onupdate=func.now(), default=func.now())
 
     __table_args__ = (
-        UniqueConstraint('uri', name='uix_activity_id'),
         Index('idx_instance_gin', 'instance', postgresql_using='gin'),
         Index('idx_nodeinfo_gin', 'nodeinfo', postgresql_using='gin'),
     )
@@ -94,12 +93,11 @@ class Activity(Base):
 
     record_id = Column(Integer, primary_key=True, autoincrement=True)
     activity_id = Column(Text, unique=True, nullable=False)
-    server_uri = Column(Text, nullable=False)
-    sender_uri = Column(Text, nullable=False)
+    server_id = Column(Text, nullable=False)
+    sender_id = Column(Text, nullable=False)
     data = Column(JSONB)
     receive_time = Column(TIMESTAMP(timezone=True), server_default=func.now())
 
     __table_args__ = (
-        UniqueConstraint('activity_id', name='uix_activity_id'),
         Index('idx_data_gin', 'data', postgresql_using='gin'),
     )

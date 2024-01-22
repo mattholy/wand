@@ -93,7 +93,7 @@ class ActivityAction:
         hostname = incoming_uri.hostname
         with wand_env.POSTGRES_SESSION() as s:
             r = s.query(wand_model.Subscriber).filter(
-                wand_model.Subscriber.uri == hostname).one_or_none()
+                wand_model.Subscriber.server_id == hostname).one_or_none()
         if r is not None:
             return r.status != 'block'
         logger.info(f'New instance request to follow: {hostname}')
@@ -110,7 +110,7 @@ class ActivityAction:
             logger.debug(e, exc_info=True)
             return False
         r = wand_model.Subscriber(
-            uri=hostname,
+            server_id=hostname,
             name=instance['title'],
             desc=instance['short_description'],
             icon=instance['thumbnail'],

@@ -87,9 +87,9 @@ def react_to_activity(remoter_activity, remoter_actor) -> None:
     act = ActivityAction(remoter_activity, remoter_actor)
     with wand_env.POSTGRES_SESSION() as s:
         r = wand_model.Activity(
-            acivity_id=act.incoming_activity.id,
-            server_uri=urlparse(act.incoming_actor.id).hostname,
-            sender_uri=act.incoming_actor.id,
+            activity_id=act.incoming_activity.id,
+            server_id=urlparse(act.incoming_actor.id).hostname,
+            sender_id=act.incoming_actor.id,
             data=act.incoming_activity.model_dump()
         )
         s.add(r)
