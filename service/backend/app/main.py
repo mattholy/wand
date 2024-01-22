@@ -62,7 +62,7 @@ app.add_middleware(ProxyHeadersMiddleware)
 
 @app.get('/init', tags=['Init'], name='Check Status of New Wand')
 def init_status():
-    if is_new_wand():
+    if is_new_wand() is None:
         return JSONResponse({'new_wand': True})
     else:
         return JSONResponse({'new_wand': False})
@@ -75,7 +75,7 @@ def init_status():
     name='Initialize New Wand'
 )
 def init(wand_init_item: WandInit):
-    if is_new_wand():
+    if is_new_wand() is None:
         logger.info('Initializing new wand ...')
         sec, pub = gen_key_pair()
         new_wand = WandRelay(
@@ -83,9 +83,18 @@ def init(wand_init_item: WandInit):
         try:
             new_wand.save()
             logger.info('Wand is now up')
-            return JSONResponse(status_code=200, content={'wand_code': 0, 'wand_msg': 'ok', 'wand_data': None})
         except redis.exceptions.DataError as e:
+            logger.critical(
+                'Something went wrong when operating redis', exc_info=True)
             raise HTTPException(status_code=405, detail='request_body_unknown')
+        from .model.wand_model import Base
+        try:
+            Base.metadata.create_all(wand_env.POSTGRES_POOL)
+        except Exception as e:
+            logger.critical(
+                'Something went wrong when operating database', exc_info=True)
+            raise HTTPException(status_code=501, detail='db_err')
+        return JSONResponse(status_code=200, content={'wand_code': 0, 'wand_msg': 'ok', 'wand_data': None})
     else:
         logger.warn('Can not initialize again')
         raise HTTPException(

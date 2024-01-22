@@ -16,6 +16,7 @@ import os
 import sqlalchemy
 import redis
 from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
 
 from .model import activitypub_model
 
@@ -68,3 +69,5 @@ POSTGRES_POOL = create_engine(
     pool_timeout=30,
     pool_recycle=3600
 )
+
+POSTGRES_SESSION = sessionmaker(bind=POSTGRES_POOL)

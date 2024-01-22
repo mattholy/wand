@@ -31,7 +31,7 @@ def is_new_wand() -> WandRelay:
         logger.debug(e, exc_info=True)
     res = [i for i in res]
     logger.debug(f'Get pks from redis are {res}')
-    if not res:
+    if res == []:
         return None
     target = WandRelay.get(res[0])
     logger.debug(f'The id about this wand are {target.wand_id}')

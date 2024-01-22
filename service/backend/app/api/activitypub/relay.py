@@ -16,11 +16,11 @@ import json
 import requests
 import hashlib
 import base64
+from urllib.parse import urlparse
 from httpsig import HeaderVerifier
 from fastapi import Request, APIRouter, Depends, HTTPException, BackgroundTasks
 from fastapi.responses import JSONResponse
 
-from ...utils.decode import decode_activity
 from ...utils.activitypub_protocol import ActivityResponse, ActivityAction
 from ...model import activitypub_model
 from ...model import wand_model
@@ -85,9 +85,18 @@ async def verify_actor(request: Request) -> dict:
 def react_to_activity(remoter_activity, remoter_actor) -> None:
     logger.debug(f'Begin to react to the activity from {remoter_actor.id}')
     act = ActivityAction(remoter_activity, remoter_actor)
+    with wand_env.POSTGRES_SESSION() as s:
+        r = wand_model.Activity(
+            acivity_id=act.incoming_activity.id,
+            server_uri=urlparse(act.incoming_actor.id).hostname,
+            sender_uri=act.incoming_actor.id,
+            data=act.incoming_activity.model_dump()
+        )
+        s.add(r)
+        s.commit()
 
 
-@router.post("/inbox", response_class=ActivityResponse)
+@router.post("/inbox", response_class=ActivityResponse, tags=['ActivityPub'], name='Inbox')
 async def relay(
     react: BackgroundTasks,
     activity: activitypub_model.Activity,
