@@ -26,7 +26,13 @@
 
 ### Connecting through the Fediverse
 
+The internet, humanity's grandest achievement in history, now spans like a vast ocean of stars, tightly connecting the farthest reaches of the world. It has accelerated the spread of knowledge and information, enabling people in every corner of the globe to glimpse the full panorama of our world. However, this digital realm, originally limitless and open for sharing, is gradually losing its true spirit. Various corporations and government institutions are building walls and barriers within this expansive network, turning our once interconnected world into a series of isolated islands. The voices on YouTube cannot leap to Bilibili, messages from WeChat cannot directly reach WhatsApp users, and insights from Reddit cannot freely flow to 2ch forums. This is an era of internet fragmentation!
 
+We long for the golden age of the internet, an era tethered by email, where every message could travel freely through standardized protocols between different service providers. The internet was meant to be this free and open. Therefore, in this era of fragmented networks, we bear a significant responsibility to create new digital bonds, reconnecting this broken world. ActivityPub and the burgeoning Fediverse it fosters are rising. In this new digital universe, all forms of communication will adhere to a unified standard protocol. Servers, interconnecting like galaxies, will enable everyone to reach any corner of the globe from their own little world. As it should be.
+
+Wand, as a strand in the Fediverse, will devote all its strength to tirelessly work for the connection and integration of this world. We are committed to reweaving this fragmented world, to reconnect information once again. This is our mission and our promise for the future—a new era of a boundless, shared, and free internet.
+
+### Wand Provides
 
 </div>
 
