@@ -7,7 +7,7 @@ COPY service/frontend/wand-zero/ .
 RUN npm run build
 
 # Stage 02 - Build FastAPI
-FROM python:3.11
+FROM python:alpine
 WORKDIR /app
 
 ARG VERSION
