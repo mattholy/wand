@@ -32,7 +32,7 @@
 
 ## Philosophy & Features
 
-### Connecting through the Fediverse
+### Connecting Through the Fediverse
 
 The internet, humanity's grandest achievement in history, now spans like a vast ocean of stars, tightly connecting the farthest reaches of the world. It has accelerated the spread of knowledge and information, enabling people in every corner of the globe to glimpse the full panorama of our world. However, this digital realm, originally limitless and open for sharing, is gradually losing its true spirit. Various corporations and government institutions are building walls and barriers within this expansive network, turning our once interconnected world into a series of isolated islands. The voices on YouTube cannot leap to Bilibili, messages from WeChat cannot directly reach WhatsApp users, and insights from Reddit cannot freely flow to 2ch forums. This is an era of internet fragmentation!
 
