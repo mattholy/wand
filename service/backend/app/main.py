@@ -114,7 +114,7 @@ async def actor():
 
 
 @app.get("/.well-known/webfinger", response_class=ActivityResponse, tags=['.well-known'], name='Webfinger', response_model=activitypub_model.WebfingerResource)
-def read_webfinger(resource: Optional[str] = Query(None, regex="acct:.+")):
+def read_webfinger(resource: Optional[str] = Query(None, pattern="acct:.+")):
     if resource is None:
         raise HTTPException(
             status_code=400, detail="Missing resource parameter")

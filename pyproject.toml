@@ -1,0 +1,3 @@
+[tool.pytest.ini_options]
+testpaths = ["service/backend/tests"]
+python_files = ["test_*.py"]

@@ -17,12 +17,11 @@ from typing import List, Dict, Optional, Any
 
 
 class PublicKey(BaseModel):
+    model_config = ConfigDict(populate_by_name=True)
+
     id: Optional[str] = Field(None, alias='id')
     owner: Optional[str] = Field(None, alias='owner')
     public_key_pem: Optional[str] = Field(None, alias='publicKeyPem')
-
-    class Config:
-        populate_by_name = True
 
 
 class Endpoints(BaseModel):
@@ -32,10 +31,9 @@ class Endpoints(BaseModel):
 
 
 class Image(BaseModel):
-    url: Optional[str] = Field(None, alias='url')
+    model_config = ConfigDict(populate_by_name=True)
 
-    class Config:
-        populate_by_name = True
+    url: Optional[str] = Field(None, alias='url')
 
 
 class Actor(BaseModel):
