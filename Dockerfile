@@ -21,7 +21,7 @@ COPY --from=vue /app/dist /app/app/web
 
 COPY start.sh /start.sh
 RUN chmod +x /start.sh
-
+RUN adduser --system --no-create-home wand
+USER wand
 EXPOSE 80
-
 CMD ["/start.sh"]
