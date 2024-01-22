@@ -49,6 +49,8 @@ Wand, as a strand in the Fediverse, will devote all its strength to tirelessly w
 - Distributed deployment, easy to scale
 - Discover other Wand in Fediverse
 - GPG identity, not username/password, for security
+- Anti-spam
+- Both forward and broadcast
 
 </div>
 
