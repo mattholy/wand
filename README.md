@@ -51,6 +51,7 @@ Wand, as a strand in the Fediverse, will devote all its strength to tirelessly w
 - GPG identity, not username/password, for security
 - Anti-spam
 - Both forward and broadcast
+- A stats about your fediverse
 
 </div>
 
@@ -58,7 +59,7 @@ Wand, as a strand in the Fediverse, will devote all its strength to tirelessly w
 
 <div style="clear: both;"></div>
 
-## Getting Start
+## Getting Start with hosting a Wand
 ActivityPUB **need** to connect through https while Wand is a naive python ASGI.
 
 So you have to deploy a [TLS Termination Proxy](https://en.wikipedia.org/wiki/TLS_termination_proxy) server in front of Wand. There are several choice:
@@ -153,8 +154,24 @@ For the green hand, there is a short guide.
 - The `publickey.asc` is your gpg public key. It is safe to share with Wand and anywhere else you like (e.g. Github)
 - Be make sure to store your private key in a safe place (e.g. YubiKey)
 
+## Getting Start with subscribing a Wand
+Send a DM to `wand` to get a login code.
+
+For example, say you subscribed `relay.example.com`. Just send any DM to `@wand@relay.example.com` (use your server admin account of course), then you will receive a code, use it to login to `https://relay.example.com/management`.
+You can configure your site-specific settings there. 
+
+There are some options you can change, but admin can override your options, or even freeze it.
+
+On management page:
+
+- Stats of your site
+- Decide which account Wand will relay, which one will not(whitelist/blacklist)
+- Decide which site you don't want to receive message
+- Content filter
+
 ## Dev & Contribute
 Just clone this repo.
+Or used issue.
 
 ### Frontend
 - `cd service/frontend/wand-zero`
