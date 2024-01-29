@@ -3,6 +3,7 @@ version: "3.8"
 services:
   wand:
     build: .
+    profiles: ["dev"]
     depends_on:
       - redis
       - postgres

@@ -13,8 +13,7 @@ put some words here
 '''
 import os
 import redis
-from starlette.responses import Response
-from fastapi import FastAPI, Request, HTTPException, Query
+from fastapi import FastAPI, Request, HTTPException, Query, Response
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import JSONResponse
@@ -123,10 +122,12 @@ async def actor():
 
 
 @app.get("/.well-known/webfinger", response_class=ActivityResponse, tags=['.well-known'], name='Webfinger', response_model=activitypub_model.WebfingerResource)
-def read_webfinger(resource: Optional[str] = Query(None, pattern="acct:.+")):
+async def read_webfinger(resource: Optional[str] = Query(None, pattern="acct:.+")):
     if resource is None:
         raise HTTPException(
             status_code=400, detail="Missing resource parameter")
+    elif not resource.startswith('acct:wand@'):
+        raise HTTPException(status_code=404)
     actor, wr = get_wand_actor_and_wr()
     res = activitypub_model.WebfingerResource(
         subject=resource,
@@ -148,5 +149,19 @@ def read_webfinger(resource: Optional[str] = Query(None, pattern="acct:.+")):
     return ActivityResponse(content=res.model_dump(by_alias=True))
 
 
-app.mount("/", StaticFiles(directory=os.path.join(os.path.dirname(
-    os.path.abspath(__file__)), "web"), html=True), name="wand-Zero")
+@app.get("/.well-known/host-meta", tags=['.well-known'], name='Host-meta')
+async def host_meta():
+    xml_content = f'''<?xml version="1.0" encoding="UTF-8"?>
+<XRD xmlns="http://docs.oasis-open.org/ns/xri/xrd-1.0">
+  <Link rel="lrdd" template="https://{wand_env.SERVER_URL}/.well-known/webfinger?resource={{uri}}"/>
+</XRD>'''
+    return Response(content=xml_content, media_type="application/xrd+xml; charset=utf-8")
+
+app.mount("/",
+          StaticFiles(
+              directory=os.path.join(os.path.dirname(
+                  os.path.abspath(__file__)), "web"),
+              html=True
+          ),
+          name="wand-Zero"
+          )
