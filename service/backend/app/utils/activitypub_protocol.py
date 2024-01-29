@@ -49,7 +49,7 @@ class ActivityAction:
             logger.info(
                 f'Receiving Follow request from {self.incoming_activity.actor}'
             )
-            if self.server_info_store():
+            if self.check_server_is_ok():
                 self.accept()
             else:
                 self.deny()
@@ -81,13 +81,14 @@ class ActivityAction:
             logger.info(
                 f'Receiving {self.incoming_activity.type} request from {self.incoming_activity.actor}'
             )
-            # broadcast
+            self.broadcast()
+            # broadcast by reconstruct into Announce
         else:
             logger.error(
                 f'Received request from {self.incoming_activity.actor} with type {self.incoming_activity.type}, not handled. Raw body is {self.incoming_activity}'
             )
 
-    def server_info_store(self) -> bool:
+    def check_server_is_ok(self) -> bool:
         logger.debug(f'Fetch remote service info')
         incoming_uri = urlparse(self.incoming_actor.id)
         hostname = incoming_uri.hostname
@@ -153,16 +154,16 @@ class ActivityAction:
             "Signature "):]
         return body, headers
 
-    def send_msg(self, msg: activitypub_model.Activity) -> None:
+    def send_msg(self, msg: activitypub_model.Activity, destination: str) -> None:
         body, headers = self.sign(msg)
-        logger.debug(f'Sending request to remote actor with body: {body}')
+        logger.debug(f'Sending request to {destination} with body: {body}')
         response = requests.post(
-            self.incoming_actor.endpoints.shared_inbox,
+            destination,
             data=body,
             headers=headers
         )
         logger.debug(
-            f'Response code from remote is {response.status_code} with body: {response.text}')
+            f'Response code from {destination} is {response.status_code} with body: {response.text}')
 
     def accept(self) -> bool:
         logger.debug(
@@ -175,12 +176,25 @@ class ActivityAction:
             actor=self.actor.id,
             object=self.incoming_activity
         )
-        self.send_msg(react_accept)
+        self.send_msg(react_accept, self.incoming_actor.endpoints.shared_inbox)
 
     def deny(self) -> bool:
         pass
 
     def undo(self) -> bool:
+        pass
+
+    def broadcast(self) -> bool:
+        '''
+        message = {
+            "@context": "https://www.w3.org/ns/activitystreams",
+            "type": "Announce",
+            "to": ["https://{}/actor/followers".format(host)],
+            "actor": "https://{}/actor".format(host),
+            "object": object_id,
+            "id": activity_id
+        }
+        '''
         pass
 
 
