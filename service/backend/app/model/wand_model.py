@@ -106,8 +106,8 @@ class Activity(Base):
     )
 
 
-class BroadcastRecord(Base):
-    __tablename__ = 'ap_broadcast_record'
+class MessageSendRecord(Base):
+    __tablename__ = 'ap_message_send_record'
 
     record_id = Column(BigInteger, primary_key=True, autoincrement=True)
     activity_id = Column(Text, nullable=False)
