@@ -75,6 +75,7 @@ class Subscriber(Base):
     name = Column(Text)
     desc = Column(Text)
     icon = Column(Text)
+    inbox = Column(Text)
     status = Column(Text, nullable=False)
     instance = Column(JSONB)
     nodeinfo = Column(JSONB)

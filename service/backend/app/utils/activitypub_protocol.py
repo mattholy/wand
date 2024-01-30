@@ -19,7 +19,7 @@ import base64
 import datetime
 import requests
 from urllib.parse import urlparse
-from typing import Tuple
+from typing import Tuple, Type
 from fastapi.responses import JSONResponse
 from httpsig.requests_auth import HTTPSignatureAuth
 from httpsig.sign import HeaderSigner
@@ -45,12 +45,23 @@ class ActivityAction:
         self.incoming_actor = remoter_actor
         self.actor, self.wr = get_wand_actor_and_wr()
 
+    @classmethod
+    async def parse(
+        cls: Type['ActivityAction'],
+        remoter_activity: activitypub_model.Activity,
+        remoter_actor: activitypub_model.Actor
+    ) -> 'ActivityAction':
+        action = cls(remoter_activity, remoter_actor)
+        await action.process_activity()
+        return action
+
+    async def process_activity(self) -> None:
         if self.incoming_activity.type == 'Follow':
             logger.info(
                 f'Receiving Follow request from {self.incoming_activity.actor}'
             )
             if self.check_server_is_ok():
-                self.accept()
+                await self.accept()
             else:
                 self.deny()
         elif self.incoming_activity.type == 'Undo':
@@ -114,6 +125,7 @@ class ActivityAction:
             name=instance['title'],
             desc=instance['short_description'],
             icon=instance['thumbnail'],
+            inbox=self.incoming_actor.endpoints.shared_inbox,
             status='active',
             instance=instance,
             nodeinfo=nodeinfo,
@@ -153,7 +165,7 @@ class ActivityAction:
             "Signature "):]
         return body, headers
 
-    def send_msg(self, msg: activitypub_model.Activity, destination: str) -> None:
+    async def send_msg(self, msg: activitypub_model.Activity, destination: str) -> None:
         body, headers = self.sign(msg)
         logger.debug(f'Sending request to {destination} with body: {body}')
         response = requests.post(
@@ -164,7 +176,7 @@ class ActivityAction:
         logger.debug(
             f'Response code from {destination} is {response.status_code} with body: {response.text}')
 
-    def accept(self) -> bool:
+    async def accept(self) -> bool:
         logger.debug(
             f'Accepting new {self.incoming_activity.type} request from {self.incoming_activity.actor}')
         react_accept = activitypub_model.Activity(
@@ -175,7 +187,13 @@ class ActivityAction:
             actor=self.actor.id,
             object=self.incoming_activity
         )
-        self.send_msg(react_accept, self.incoming_actor.endpoints.shared_inbox)
+        try:
+            await self.send_msg(react_accept, self.incoming_actor.endpoints.shared_inbox)
+        except:
+            logger.error(
+                f'Error when send Accept msg to {self.incoming_actor.id}')
+            return False
+        return True
 
     def deny(self) -> bool:
         pass
@@ -212,9 +230,14 @@ class ActivityAction:
         with wand_env.POSTGRES_SESSION() as s:
             s.add(broadcast_activity)
             s.commit()
-            subscriber = s.query(wand_model.Subscriber).filter(
+            subscribers = s.query(wand_model.Subscriber).filter(
                 wand_model.Subscriber.status == 'active').all()
-        pass
+        if not subscribers:
+            logger.info(
+                'No active subscribers found. Incoming activity will not be broadcasted')
+            return False
+        for subscriber in subscribers:
+            pass  # 我应该怎么在这里加速我的请求
 
 
 class ActivityResponse(JSONResponse):

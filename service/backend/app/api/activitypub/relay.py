@@ -52,7 +52,7 @@ async def verify_actor(request: Request) -> dict:
             f'Can not fetch actor of activity'
         )
         logger.debug(e, exc_info=True)
-        HTTPException(status_code=401)
+        raise HTTPException(status_code=401)
     verifier = HeaderVerifier(
         headers=request.headers,
         required_headers=["(request-target)", "host",
@@ -82,9 +82,9 @@ async def verify_actor(request: Request) -> dict:
     return actor
 
 
-def react_to_activity(remoter_activity, remoter_actor) -> None:
+async def react_to_activity(remoter_activity, remoter_actor) -> None:
     logger.debug(f'Begin to react to the activity from {remoter_actor.id}')
-    act = ActivityAction(remoter_activity, remoter_actor)
+    act = await ActivityAction.parse(remoter_activity, remoter_actor)
     with wand_env.POSTGRES_SESSION() as s:
         r = wand_model.Activity(
             activity_id=act.incoming_activity.id,
