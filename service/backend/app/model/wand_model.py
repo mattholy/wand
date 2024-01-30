@@ -19,7 +19,7 @@ from redis_om import HashModel, Field
 from pydantic import BaseModel
 from sqlalchemy import create_engine, Column, Text, TIMESTAMP, func, Integer, BigInteger
 from sqlalchemy.dialects.postgresql import JSONB
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import declarative_base
 from sqlalchemy.schema import UniqueConstraint, Index
 
 from ..wand_env import REDIS_POOL, SERVER_URL
