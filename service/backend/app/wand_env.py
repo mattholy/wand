@@ -16,6 +16,7 @@ import os
 import sqlalchemy
 import redis
 from sqlalchemy import create_engine
+from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker
 
 from .model import activitypub_model
@@ -71,3 +72,21 @@ POSTGRES_POOL = create_engine(
 )
 
 POSTGRES_SESSION = sessionmaker(bind=POSTGRES_POOL)
+
+POSTGRES_ENGINE_ASYNC = create_async_engine(
+    f"postgresql+asyncpg://{os.environ.get('WD_POSTGRES_USER', 'wand')}:"
+    f"{os.environ.get('WD_POSTGRES_PWD', 'password_of_wand')}@"
+    f"{os.environ.get('WD_POSTGRES_SERVER', 'localhost')}:"
+    f"{os.environ.get('WD_POSTGRES_PORT', '5432')}/"
+    f"{os.environ.get('WD_POSTGRES_DBNAME', 'wand')}",
+    echo=True,
+    pool_size=10,  # 连接池的大小
+    max_overflow=20,  # 超出池大小外最多创建的连接数
+    pool_recycle=3600,  # 连接最大重用时间（秒）
+)
+
+POSTGRES_SESSION_ASYNC = sessionmaker(
+    bind=POSTGRES_ENGINE_ASYNC,
+    expire_on_commit=False,
+    class_=AsyncSession
+)

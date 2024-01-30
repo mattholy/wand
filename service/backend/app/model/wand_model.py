@@ -17,7 +17,7 @@ import typing
 import uuid
 from redis_om import HashModel, Field
 from pydantic import BaseModel
-from sqlalchemy import create_engine, Column, Text, TIMESTAMP, func, Integer
+from sqlalchemy import create_engine, Column, Text, TIMESTAMP, func, Integer, BigInteger
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.schema import UniqueConstraint, Index
@@ -76,7 +76,9 @@ class Subscriber(Base):
     desc = Column(Text)
     icon = Column(Text)
     inbox = Column(Text)
+    software = Column(Text)
     status = Column(Text, nullable=False)
+    subscription_return_msg = Column(Text)
     instance = Column(JSONB)
     nodeinfo = Column(JSONB)
     create_time = Column(TIMESTAMP(timezone=True), default=func.now())
@@ -92,7 +94,7 @@ class Subscriber(Base):
 class Activity(Base):
     __tablename__ = 'ap_activity'
 
-    record_id = Column(Integer, primary_key=True, autoincrement=True)
+    record_id = Column(BigInteger, primary_key=True, autoincrement=True)
     activity_id = Column(Text, unique=True, nullable=False)
     server_id = Column(Text, nullable=False)
     sender_id = Column(Text, nullable=False)
@@ -102,3 +104,13 @@ class Activity(Base):
     __table_args__ = (
         Index('idx_data_gin', 'data', postgresql_using='gin'),
     )
+
+
+class BroadcastRecord(Base):
+    __tablename__ = 'ap_broadcast_record'
+
+    record_id = Column(BigInteger, primary_key=True, autoincrement=True)
+    activity_id = Column(Text, nullable=False)
+    destnation_server_id = Column(Text, nullable=False)
+    status = Column(Text, nullable=False)
+    create_time = Column(TIMESTAMP(timezone=True), server_default=func.now())

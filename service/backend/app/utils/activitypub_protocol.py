@@ -18,8 +18,12 @@ import hashlib
 import base64
 import datetime
 import requests
+import asyncio
+import aiohttp
+import certifi
+import ssl
 from urllib.parse import urlparse
-from typing import Tuple, Type
+from typing import Tuple, Type, Optional
 from fastapi.responses import JSONResponse
 from httpsig.requests_auth import HTTPSignatureAuth
 from httpsig.sign import HeaderSigner
@@ -46,22 +50,22 @@ class ActivityAction:
         self.actor, self.wr = get_wand_actor_and_wr()
 
     @classmethod
-    async def parse(
+    def parse(
         cls: Type['ActivityAction'],
         remoter_activity: activitypub_model.Activity,
         remoter_actor: activitypub_model.Actor
     ) -> 'ActivityAction':
         action = cls(remoter_activity, remoter_actor)
-        await action.process_activity()
+        action.process_activity()
         return action
 
-    async def process_activity(self) -> None:
+    def process_activity(self) -> None:
         if self.incoming_activity.type == 'Follow':
             logger.info(
                 f'Receiving Follow request from {self.incoming_activity.actor}'
             )
             if self.check_server_is_ok():
-                await self.accept()
+                self.accept()
             else:
                 self.deny()
         elif self.incoming_activity.type == 'Undo':
@@ -69,8 +73,10 @@ class ActivityAction:
                 f'Receiving Undo request from {self.incoming_activity.actor}'
             )
             with wand_env.POSTGRES_SESSION() as s:
-                r = s.query(wand_model.Subscriber).filter(wand_model.Subscriber.uri == urlparse(
-                    self.incoming_actor.id).hostname).one_or_none()
+                r = s.query(wand_model.Subscriber).filter(
+                    wand_model.Subscriber.server_id == urlparse(
+                        self.incoming_actor.id).hostname
+                ).one_or_none()
                 if r is None:
                     logger.warn(
                         f'No record found for {urlparse(self.incoming_actor.id).hostname}, ignore Undo request')
@@ -92,7 +98,7 @@ class ActivityAction:
             logger.info(
                 f'Receiving {self.incoming_activity.type} request from {self.incoming_activity.actor}'
             )
-            self.broadcast()
+            asyncio.run(self.broadcast())
         else:
             logger.error(
                 f'Received request from {self.incoming_activity.actor} with type {self.incoming_activity.type}, not handled. Raw body is {self.incoming_activity}'
@@ -126,7 +132,9 @@ class ActivityAction:
             desc=instance['short_description'],
             icon=instance['thumbnail'],
             inbox=self.incoming_actor.endpoints.shared_inbox,
-            status='active',
+            software=nodeinfo['software']['name'],
+            subscription_return_msg='',
+            status='pending',
             instance=instance,
             nodeinfo=nodeinfo,
         )
@@ -165,35 +173,113 @@ class ActivityAction:
             "Signature "):]
         return body, headers
 
-    async def send_msg(self, msg: activitypub_model.Activity, destination: str) -> None:
+    async def send_msg(
+        self,
+        msg: activitypub_model.Activity,
+        destination: str
+    ) -> aiohttp.ClientResponse:
         body, headers = self.sign(msg)
         logger.debug(f'Sending request to {destination} with body: {body}')
-        response = requests.post(
-            destination,
-            data=body,
-            headers=headers
-        )
-        logger.debug(
-            f'Response code from {destination} is {response.status_code} with body: {response.text}')
+        hostname = urlparse(destination).hostname
+        ssl_context = ssl.create_default_context(cafile=certifi.where())
+        conn = aiohttp.TCPConnector(ssl=ssl_context)
 
-    async def accept(self) -> bool:
+        async with aiohttp.ClientSession(connector=conn) as session:
+            try:
+                async with session.post(destination, data=body, headers=headers) as resp:
+                    response = resp
+                    response_text = await resp.text()
+                    logger.debug(
+                        f'Response code from {hostname} is {resp.status} with body: {response_text}')
+                    try:
+                        async with wand_env.POSTGRES_SESSION_ASYNC() as s:
+                            broadcast_record = wand_model.BroadcastRecord(
+                                activity_id=msg.id,
+                                destnation_server_id=hostname,
+                                status='SUCCESS' if response.status in [
+                                    200, 202] else 'FAILURE',
+                            )
+                            logger.debug(
+                                f'Save response from {hostname} to database')
+                            s.add(broadcast_record)
+                            await s.commit()
+                    except Exception as db_error:
+                        logger.error(
+                            f'Error when saving broadcast record to database: {db_error}')
+                    finally:
+                        return response, response_text
+            except Exception as e:
+                logger.error(
+                    f'Error when sending data to {hostname}')
+                logger.debug(e, exc_info=True)
+                try:
+                    async with wand_env.POSTGRES_SESSION_ASYNC() as s:
+                        broadcast_record = wand_model.BroadcastRecord(
+                            activity_id=msg.id,
+                            destnation_server_id=hostname,
+                            status='FAILURE',
+                        )
+                        logger.debug(
+                            f'Save response from {hostname} to database')
+                        s.add(broadcast_record)
+                        await s.commit()
+                except Exception as db_error:
+                    logger.error(
+                        f'Error when saving broadcast record to database: {db_error}')
+                raise e
+
+    def accept(self) -> bool:
         logger.debug(
             f'Accepting new {self.incoming_activity.type} request from {self.incoming_activity.actor}')
-        react_accept = activitypub_model.Activity(
-            context='https://www.w3.org/ns/activitystreams',
-            type='Accept',
-            to=[self.incoming_actor.id],
-            id=f'https://{wand_env.SERVER_URL}/activities/{uuid.uuid4()}',
-            actor=self.actor.id,
-            object=self.incoming_activity
-        )
-        try:
-            await self.send_msg(react_accept, self.incoming_actor.endpoints.shared_inbox)
-        except:
-            logger.error(
-                f'Error when send Accept msg to {self.incoming_actor.id}')
-            return False
-        return True
+        incoming_uri = urlparse(self.incoming_actor.id)
+        hostname = incoming_uri.hostname
+        with wand_env.POSTGRES_SESSION() as s:
+            loaded_r = s.query(wand_model.Subscriber).filter_by(
+                server_id=hostname).one_or_none()
+            if loaded_r is None:
+                logger.error(f'Tring to accept unknown server')
+                return False
+            loaded_r.status = 'waiting'
+            react_accept = activitypub_model.Activity(
+                context='https://www.w3.org/ns/activitystreams',
+                type='Accept',
+                to=[self.incoming_actor.id],
+                id=f'https://{wand_env.SERVER_URL}/activities/{uuid.uuid4()}',
+                actor=self.actor.id,
+                object=self.incoming_activity
+            )
+            wand_activity_for_save = wand_model.Activity(
+                activity_id=react_accept.id,
+                server_id=self.wr.service_domain,
+                sender_id=self.actor.id,
+                data=react_accept.model_dump(by_alias=True)
+            )
+            s.add(wand_activity_for_save)
+            try:
+                res, response_text = asyncio.run(
+                    self.send_msg(
+                        react_accept,
+                        self.incoming_actor.endpoints.shared_inbox
+                    )
+                )
+                assert res.status == 200 or res.status == 202
+                loaded_r.status = 'active'
+                loaded_r.subscription_return_msg = response_text
+            except AssertionError:
+                logger.warn(
+                    f'Error when send Accept Object to {self.incoming_actor.id}. Response body is {res.text}')
+                loaded_r.subscription_return_msg = response_text
+                return False
+            except Exception as e:
+                logger.error(
+                    f'Error when send Accept Object to {self.incoming_actor.id} with exception 「{e}」')
+                logger.debug(e, exc_info=True)
+                return False
+            finally:
+                s.commit()
+            logger.info(
+                f'Done with accepting Follow request from {self.incoming_actor.id}')
+            return True
 
     def deny(self) -> bool:
         pass
@@ -201,31 +287,20 @@ class ActivityAction:
     def undo(self) -> bool:
         pass
 
-    def broadcast(self) -> bool:
-        '''
-        message = {
-            "@context": "https://www.w3.org/ns/activitystreams",
-            "type": "Announce",
-            "to": ["https://{}/actor/followers".format(host)],
-            "actor": "https://{}/actor".format(host),
-            "object": object_id,
-            "id": activity_id
-        }
-        '''
-        payload_id = str(uuid.uuid4())
+    async def broadcast(self) -> bool:
         payload = activitypub_model.Activity(
             context='https://www.w3.org/ns/activitystreams',
-            id=f'https://{self.wr.service_domain}/activities/{payload_id}',
+            id=f'https://{self.wr.service_domain}/activities/{uuid.uuid4()}',
             type='Announce',
             actor=self.actor.id,
             object=self.incoming_activity.id,
             to=[f"https://{self.wr.service_domain}/actor/followers"]
         )
         broadcast_activity = wand_model.Activity(
-            activity_id=payload_id,
+            activity_id=payload.id,
             server_id=self.wr.service_domain,
             sender_id=self.actor.id,
-            data=payload.model_dump_json
+            data=payload.model_dump(by_alias=True)
         )
         with wand_env.POSTGRES_SESSION() as s:
             s.add(broadcast_activity)
@@ -236,8 +311,16 @@ class ActivityAction:
             logger.info(
                 'No active subscribers found. Incoming activity will not be broadcasted')
             return False
+        tasks = []
         for subscriber in subscribers:
-            pass  # 我应该怎么在这里加速我的请求
+            task = asyncio.create_task(
+                self.send_msg(payload, subscriber.inbox)
+            )
+            tasks.append(task)
+
+        responses = await asyncio.gather(*tasks, return_exceptions=True)
+
+        return True
 
 
 class ActivityResponse(JSONResponse):

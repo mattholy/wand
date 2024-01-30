@@ -10,3 +10,6 @@ redis-om
 psycopg2-binary
 cryptography
 python-gnupg
+aiohttp
+asyncpg
+greenlet

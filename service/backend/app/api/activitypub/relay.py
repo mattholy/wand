@@ -82,18 +82,21 @@ async def verify_actor(request: Request) -> dict:
     return actor
 
 
-async def react_to_activity(remoter_activity, remoter_actor) -> None:
+def react_to_activity(
+    remoter_activity: activitypub_model.Activity,
+    remoter_actor: activitypub_model.Actor
+) -> None:
     logger.debug(f'Begin to react to the activity from {remoter_actor.id}')
-    act = await ActivityAction.parse(remoter_activity, remoter_actor)
     with wand_env.POSTGRES_SESSION() as s:
         r = wand_model.Activity(
-            activity_id=act.incoming_activity.id,
-            server_id=urlparse(act.incoming_actor.id).hostname,
-            sender_id=act.incoming_actor.id,
-            data=act.incoming_activity.model_dump()
+            activity_id=remoter_activity.id,
+            server_id=urlparse(remoter_actor.id).hostname,
+            sender_id=remoter_actor.id,
+            data=remoter_activity.model_dump(by_alias=True)
         )
         s.add(r)
         s.commit()
+    act = ActivityAction.parse(remoter_activity, remoter_actor)
 
 
 @router.post("/inbox", response_class=ActivityResponse, tags=['ActivityPub'], name='Inbox')
