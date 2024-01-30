@@ -12,7 +12,6 @@ put some words here
 @License :   MIT License
 '''
 import os
-import arrow
 import redis
 from fastapi import FastAPI, Request, HTTPException, Query, Response
 from fastapi.middleware.cors import CORSMiddleware
@@ -119,9 +118,7 @@ async def nodeinfo():
 @app.get("/actor", response_class=ActivityResponse, tags=['ActivityPub'], name='Actor', response_model=activitypub_model.Actor)
 async def actor():
     logger.info('Incoming request for actor')
-    print(arrow.now())
     actor, wr = get_wand_actor_and_wr()
-    print(arrow.now())
     return ActivityResponse(content=actor.model_dump(by_alias=True))
 
 
