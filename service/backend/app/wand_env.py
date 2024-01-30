@@ -79,10 +79,9 @@ POSTGRES_ENGINE_ASYNC = create_async_engine(
     f"{os.environ.get('WD_POSTGRES_SERVER', 'localhost')}:"
     f"{os.environ.get('WD_POSTGRES_PORT', '5432')}/"
     f"{os.environ.get('WD_POSTGRES_DBNAME', 'wand')}",
-    echo=True,
-    pool_size=10,  # 连接池的大小
-    max_overflow=20,  # 超出池大小外最多创建的连接数
-    pool_recycle=3600,  # 连接最大重用时间（秒）
+    pool_size=10,
+    max_overflow=20,
+    pool_recycle=3600,
 )
 
 POSTGRES_SESSION_ASYNC = sessionmaker(
