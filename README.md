@@ -2,7 +2,7 @@
 
 <img src="./docs/logo.png" alt="Wand" width="300"/>
 
-**Wand is yet another open-source ActivityPub relay, in Python. 😘**
+**Wand is yet another awesome ActivityPub relay, in Python. 😘**
 
 ----
 
