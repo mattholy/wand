@@ -82,7 +82,6 @@ class ActivityAction:
                 f'Receiving {self.incoming_activity.type} request from {self.incoming_activity.actor}'
             )
             self.broadcast()
-            # broadcast by reconstruct into Announce
         else:
             logger.error(
                 f'Received request from {self.incoming_activity.actor} with type {self.incoming_activity.type}, not handled. Raw body is {self.incoming_activity}'
@@ -195,6 +194,26 @@ class ActivityAction:
             "id": activity_id
         }
         '''
+        payload_id = str(uuid.uuid4())
+        payload = activitypub_model.Activity(
+            context='https://www.w3.org/ns/activitystreams',
+            id=f'https://{self.wr.service_domain}/activities/{payload_id}',
+            type='Announce',
+            actor=self.actor.id,
+            object=self.incoming_activity.id,
+            to=[f"https://{self.wr.service_domain}/actor/followers"]
+        )
+        broadcast_activity = wand_model.Activity(
+            activity_id=payload_id,
+            server_id=self.wr.service_domain,
+            sender_id=self.actor.id,
+            data=payload.model_dump_json
+        )
+        with wand_env.POSTGRES_SESSION() as s:
+            s.add(broadcast_activity)
+            s.commit()
+            subscriber = s.query(wand_model.Subscriber).filter(
+                wand_model.Subscriber.status == 'active').all()
         pass
 
 

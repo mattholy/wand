@@ -40,7 +40,7 @@ def is_new_wand() -> WandRelay:
     return target
 
 
-def get_wand_actor_and_wr() -> Tuple[activitypub_model.Actor, wand_model.WandInit]:
+def get_wand_actor_and_wr() -> Tuple[activitypub_model.Actor, wand_model.WandRelay]:
     wr = is_new_wand()
     wand_actor = activitypub_model.Actor(
         context=['https://www.w3.org/ns/activitystreams',
