@@ -17,6 +17,8 @@
 
 ![GitHub Release](https://img.shields.io/github/v/release/mattholy/wand)
 
+[![delightful](https://codeberg.org/teaserbot-labs/delightful/media/branch/main/assets/delightful-badge.png)](https://codeberg.org/teaserbot-labs/delightful)
+
 ----
 
 [🇬🇧English](README.md) | [🇨🇳中文](README_zh-CN.md)
