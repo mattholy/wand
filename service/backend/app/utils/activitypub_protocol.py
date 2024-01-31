@@ -22,6 +22,7 @@ import asyncio
 import aiohttp
 import certifi
 import ssl
+import arrow
 from urllib.parse import urlparse
 from typing import Tuple, Type, Optional
 from fastapi.responses import JSONResponse
@@ -312,6 +313,7 @@ class ActivityAction:
                 'No active subscribers found. Incoming activity will not be broadcasted')
             return False
         tasks = []
+        start_time = arrow.now()
         for subscriber in subscribers:
             task = asyncio.create_task(
                 self.send_msg(payload, subscriber.inbox)
@@ -319,6 +321,17 @@ class ActivityAction:
             tasks.append(task)
 
         responses = await asyncio.gather(*tasks, return_exceptions=True)
+        end_time = arrow.now()
+        last = (end_time - start_time).seconds
+        s = 0
+        f = 0
+        for r in responses:
+            if isinstance(r, Exception):
+                f = f + 1
+            else:
+                s = s+1
+        logger.info(
+            f'Finish broadcast in {last}s, to {len(responses)} subscribers, {f} failures, {s} successes.')
 
         return True
 
