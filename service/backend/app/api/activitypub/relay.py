@@ -105,6 +105,7 @@ async def relay(
     activity: activitypub_model.Activity,
     actor: dict = Depends(verify_actor)
 ):
+    logger.debug(f'We got an activity: {activity}')
     if 'https://www.w3.org/ns/activitystreams' not in activity.context:
         logger.warning(f'Remote activity with context: {activity.context}')
         raise HTTPException(

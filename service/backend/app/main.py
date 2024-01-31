@@ -13,13 +13,16 @@ put some words here
 '''
 import os
 import redis
-from fastapi import FastAPI, Request, HTTPException, Query, Response
+from fastapi import FastAPI, HTTPException, Query, Response, Header, Depends
+from fastapi.requests import Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, RedirectResponse
+from fastapi import status as status_code
 from starlette.middleware.base import BaseHTTPMiddleware
 from uvicorn.middleware.proxy_headers import ProxyHeadersMiddleware
 from typing import Optional
+from urllib.parse import urlparse
 
 
 from . import wand_env
@@ -124,26 +127,29 @@ async def actor():
 
 @app.get("/.well-known/webfinger", response_class=ActivityResponse, tags=['.well-known'], name='Webfinger', response_model=activitypub_model.WebfingerResource)
 async def read_webfinger(resource: Optional[str] = Query(None, pattern="acct:.+")):
-    if resource is None:
+    if (resource is None) or (not resource.startswith('acct:')) or (not resource.endswith(wand_env.SERVER_URL)):
         raise HTTPException(
-            status_code=400, detail="Missing resource parameter")
-    elif not resource.startswith('acct:wand@'):
-        raise HTTPException(status_code=404)
-    actor, wr = get_wand_actor_and_wr()
+            status_code=status_code.HTTP_404_NOT_FOUND
+        )
+    try:
+        username = urlparse(resource).path.split('@')[0]
+    except:
+        raise HTTPException(
+            status_code=status_code.HTTP_422_UNPROCESSABLE_ENTITY
+        )
+    if username != 'wand':
+        raise HTTPException(
+            status_code=status_code.HTTP_404_NOT_FOUND
+        )
     res = activitypub_model.WebfingerResource(
         subject=resource,
-        aliases=actor.id,
+        aliases=[f'https://{wand_env.SERVER_URL}/users/{username}'],
         links=[
             activitypub_model.WebfingerLink(
                 rel='self',
                 type='application/activity+json',
-                href=actor.id
-            ),
-            activitypub_model.WebfingerLink(
-                rel='self',
-                type='application/ld+json; profile="https://www.w3.org/ns/activitystreams"',
-                href=actor.id
-            ),
+                href=f'https://{wand_env.SERVER_URL}/users/{username}'
+            )
         ]
     )
 
@@ -157,6 +163,39 @@ async def host_meta():
   <Link rel="lrdd" template="https://{wand_env.SERVER_URL}/.well-known/webfinger?resource={{uri}}"/>
 </XRD>'''
     return Response(content=xml_content, media_type="application/xrd+xml; charset=utf-8")
+
+
+@app.get(
+    '/users/{uid}',
+    tags=['ActivityPub'],
+    name='User Info',
+    response_model=activitypub_model.Actor
+)
+async def user_info(uid: str, accept: str = Header(...)):
+    if 'application/activity+json' not in accept:
+        return RedirectResponse('/', status_code=status_code.HTTP_303_SEE_OTHER)
+    wr = is_new_wand()
+    res = activitypub_model.Actor(
+        context="https://www.w3.org/ns/activitystreams",
+        id=f'https://{wand_env.SERVER_URL}/users/{uid}',
+        type='Person',
+        name=wr.service_name,
+        preferredUsername=wr.service_name,
+        summary=wr.service_desc,
+        inbox=f'https://{wand_env.SERVER_URL}/inbox',
+        endpoints=activitypub_model.Endpoints(
+            sharedInbox=f'https://{wand_env.SERVER_URL}/inbox'
+        ),
+        publicKey=activitypub_model.PublicKey(
+            id=f'https://{wr.service_domain}/actor#main-key',
+            owner=f'https://{wr.service_domain}/actor',
+            publicKeyPem=wr.actor_key_sec
+        ),
+        icon=activitypub_model.Image(url=wr.service_icon),
+        image=activitypub_model.Image(url=wr.service_image)
+    )
+    return ActivityResponse(content=res.model_dump(by_alias=True))
+
 
 app.mount("/",
           StaticFiles(
