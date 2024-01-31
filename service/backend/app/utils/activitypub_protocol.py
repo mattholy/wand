@@ -329,7 +329,7 @@ class ActivityAction:
             if isinstance(r, Exception):
                 f = f + 1
             else:
-                s = s+1
+                s = s + 1
         logger.info(
             f'Finish broadcast in {last}s, to {len(responses)} subscribers, {f} failures, {s} successes.')
 
