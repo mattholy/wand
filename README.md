@@ -32,10 +32,9 @@
 
 <div>
 
-> [!WARNING]
-> This project is currently under developing, not all functions are ready.
-> 
-> Do not use it in production
+> [!WARNING]\
+> This project is currently under developing, not all functions are ready. Do not use it in production.
+
 
 ## Philosophy & Features
 
