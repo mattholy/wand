@@ -3,29 +3,21 @@
 <img src="./docs/logo.png" alt="Wand" width="300"/>
 
 **Wand is yet another awesome ActivityPub relay, in Python. 😘**
-
 ----
-
-
 ![GitHub License](https://img.shields.io/github/license/mattholy/wand)
 ![GitHub top language](https://img.shields.io/github/languages/top/mattholy/wand)
 ![GitHub commit activity](https://img.shields.io/github/commit-activity/m/mattholy/wand)
-![GitHub issues](https://img.shields.io/github/issues-raw/mattholy/wand)
-
 ![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/mattholy/wand/ci.yml)
 [![codecov](https://codecov.io/github/mattholy/wand/graph/badge.svg?token=E9FLI822U9)](https://codecov.io/github/mattholy/wand)
-
 ![GitHub Release](https://img.shields.io/github/v/release/mattholy/wand)
 
 [![delightful](https://codeberg.org/teaserbot-labs/delightful/media/branch/main/assets/delightful-badge.png)](https://codeberg.org/teaserbot-labs/delightful)
 
-----
 
 [🇬🇧English](README.md) | [🇨🇳中文](README_zh-CN.md)
 
-----
-<img src="./docs/fedi.png" height="100"/>
 
+<img src="./docs/fedi.png" height="100"/>
 </div>
 
 ----
