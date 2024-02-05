@@ -36,6 +36,7 @@ COPY start.sh /start.sh
 RUN chmod +x /start.sh && \
     adduser --system --no-create-home wand
 
+LABEL org.opencontainers.image.source=https://github.com/mattholy/wand
 USER wand
 EXPOSE 80
 CMD ["/start.sh"]

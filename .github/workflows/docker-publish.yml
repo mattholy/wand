@@ -23,13 +23,6 @@ jobs:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
-      - name: Log in to GitHub Container Registry
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Get the Ref
         id: tag-gen
         uses: ankitvgupta/ref-to-tag-action@master
@@ -48,6 +41,4 @@ jobs:
           tags: |
             mattholy/wand:${{ steps.tag-gen.outputs.tag }}
             mattholy/wand:latest
-            ghcr.io/mattholy/wand:${{ steps.tag-gen.outputs.tag }}
-            ghcr.io/mattholy/wand:latest
           build-args: VERSION=${{ steps.tag-gen.outputs.tag }}
