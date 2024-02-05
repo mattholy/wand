@@ -11,12 +11,11 @@ COPY service/frontend/wand-zero/ .
 RUN npm run build
 
 # Stage 02 - Build FastAPI Application
-FROM python:3.12-alpine as fastapi-builder
+FROM python:3.12 as fastapi-builder
 WORKDIR /app
 
 # Installing Poetry
-RUN apk add --no-cache curl && \
-    curl -sSL https://install.python-poetry.org | python3 - && \
+RUN curl -sSL https://install.python-poetry.org | python3 - && \
     ln -s $HOME/.local/bin/poetry /usr/local/bin/poetry
 
 # Copying the Python project files
