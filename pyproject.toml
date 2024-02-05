@@ -1,3 +1,35 @@
 [tool.pytest.ini_options]
 testpaths = ["service/backend/tests"]
 python_files = ["test_*.py"]
+
+[tool.poetry]
+name = "wand"
+version = "0.1.0"
+description = "Wand is yet another awesome ActivityPub relay, in Python. 😘"
+authors = ["Mattholy <smile.used@hotmail.com>"]
+license = "WTFPL"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+fastapi = "^0.109.2"
+httpsig = "^1.3.0"
+redis-om = "^0.2.1"
+redis = ">=3.5.3,<5.0.0"
+gunicorn = "^21.2.0"
+uvicorn = "^0.27.0.post1"
+requests = "^2.31.0"
+colorlog = "^6.8.2"
+sqlalchemy = "^2.0.25"
+psycopg2-binary = "^2.9.9"
+cryptography = "^42.0.2"
+python-gnupg = "^0.5.2"
+aiohttp = "^3.9.3"
+asyncpg = "^0.29.0"
+greenlet = "^3.0.3"
+arrow = "^1.3.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
