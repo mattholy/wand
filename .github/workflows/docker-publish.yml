@@ -23,9 +23,12 @@ jobs:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
-      - name: Extract tag name
-        id: extract_tag
-        run: echo "TAG_NAME=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
+      - name: Get the Ref
+        id: tag-gen
+        uses: ankitvgupta/ref-to-tag-action@master
+        with:
+          ref: ${{ github.ref }}
+          head_ref: ${{ github.head_ref }}
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
@@ -35,8 +38,8 @@ jobs:
           push: true
           provenance: mode=max
           sbom: true
-          tags: mattholy/wand:${{ steps.extract_tag.outputs.TAG_NAME }}
-          build-args: VERSION=${{ steps.extract_tag.outputs.TAG_NAME }}
+          tags: mattholy/wand:${{ steps.tag-gen.outputs.tag }}
+          build-args: VERSION=${{ steps.tag-gen.outputs.tag }}
 
       - name: Update repo description
         uses: peter-evans/dockerhub-description@v3
