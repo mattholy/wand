@@ -38,5 +38,7 @@ jobs:
           push: true
           provenance: mode=max
           sbom: true
-          tags: mattholy/wand:${{ steps.tag-gen.outputs.tag }}
+          tags: |
+            mattholy/wand:${{ steps.tag-gen.outputs.tag }}
+            mattholy/wand:latest
           build-args: VERSION=${{ steps.tag-gen.outputs.tag }}
